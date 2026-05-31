@@ -107,6 +107,7 @@ class Registry:
 
     def __init__(self) -> None:
         self._modules: dict[str, ModuleMetadata] = {}
+        self._module_order: list[str] = []
         self._services: dict[str, Any] = {}
         self._screens: list[ScreenRegistration] = []
         self._help_topics: dict[str, str] = {}
@@ -125,10 +126,14 @@ class Registry:
         if metadata.name in self._modules:
             raise ValueError(f"Module is already registered: {metadata.name}")
         self._modules[metadata.name] = metadata
+        self._module_order.append(metadata.name)
         logging.getLogger(__name__).debug("Registered module: %s", metadata)
 
     def list_modules(self) -> dict[str, ModuleMetadata]:
         return dict(sorted(self._modules.items()))
+
+    def list_module_order(self) -> list[str]:
+        return list(self._module_order)
 
     def add_service(self, name: str, service: Any) -> None:
         if name in self._services:

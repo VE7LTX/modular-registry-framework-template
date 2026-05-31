@@ -21,6 +21,7 @@ def register(registry: Registry, context: AppContext) -> None:
     registry.add_service("flow_graph", service)
     registry.add_command("flow_graph.render_mermaid", service.render_mermaid)
     registry.add_command("flow_graph.render_adjacency", service.render_adjacency)
+    registry.add_health_check("flow_graph.quality", "Flow graph quality", service.graph_quality_check, "flow_graph")
     registry.add_report_section("system.flow_graph", "System Flow Graph", lambda ctx: service.render_mermaid(), order=30)
     registry.add_screen("System", "Flow Graph", build_flow_graph_screen, order=5)
     registry.add_data_input("flow_graph", "registry capabilities", "metadata", "Registered modules and capabilities.")
@@ -28,4 +29,3 @@ def register(registry: Registry, context: AppContext) -> None:
 
     for key, content in HELP_TOPICS.items():
         registry.add_help_topic(key, content)
-

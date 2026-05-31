@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 
 from modular_registry_framework.core.context import AppContext
+from modular_registry_framework.modules.health_checks.models import HealthResult
 
 from .models import FlowGraph, GraphEdge, GraphNode
 
@@ -120,6 +121,39 @@ class FlowGraphService:
         for edge in graph.edges:
             lines.append(f"{edge.source} -> {edge.target} [{edge.kind}: {edge.label}]")
         return "\n".join(lines)
+
+    def graph_quality_check(self, context: AppContext) -> HealthResult:
+        graph = self.build_graph()
+        node_ids = {node.id for node in graph.nodes}
+        missing = [
+            f"{edge.source}->{edge.target}"
+            for edge in graph.edges
+            if edge.source not in node_ids or edge.target not in node_ids
+        ]
+        ports = context.registry.list_data_ports()
+        modules_with_ports = {port.module for port in ports}
+        modules_without_ports = sorted(set(context.registry.list_modules()) - modules_with_ports)
+        unhandled_events = []
+        handled_events = set(context.registry.list_event_handlers())
+        emitted_events = {
+            edge.target.removeprefix("event_").replace("_", ".")
+            for edge in graph.edges
+            if edge.target.startswith("event_")
+        }
+        for event_name in emitted_events:
+            if event_name not in handled_events and "*" not in handled_events:
+                unhandled_events.append(event_name)
+
+        if missing:
+            return HealthResult("flow_graph.quality", "fail", "Graph edges reference missing nodes: " + ", ".join(missing), "flow_graph")
+        if modules_without_ports or unhandled_events:
+            details = []
+            if modules_without_ports:
+                details.append("modules without trace ports: " + ", ".join(modules_without_ports))
+            if unhandled_events:
+                details.append("unhandled events: " + ", ".join(sorted(unhandled_events)))
+            return HealthResult("flow_graph.quality", "warn", " | ".join(details), "flow_graph")
+        return HealthResult("flow_graph.quality", "pass", f"Graph has {len(graph.nodes)} nodes and {len(graph.edges)} edges.", "flow_graph")
 
 
 def _node_id(value: str) -> str:

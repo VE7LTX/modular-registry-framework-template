@@ -198,6 +198,7 @@ Use events for meaningful cross-module actions, not every small UI click.
 - `modular_registry_framework/modules/reports/` - Markdown report generation from registered sections
 - `modular_registry_framework/modules/flow_graph/` - automatic Mermaid graph of modules, capabilities, events, inputs, outputs, and flows
 - `modular_registry_framework/modules/graph_export/` - Mermaid and JSON graph artifact snapshots
+- `modular_registry_framework/modules/template_generator/` - starter folders for common app families
 - `modular_registry_framework/modules/example/` - minimal feature module
 - `modular_registry_framework/desktop/shell.py` - small Tkinter shell that builds navigation from registered screens
 - `modular_registry_framework/scaffold.py` - CLI for creating a new module folder
@@ -290,6 +291,8 @@ The Flow Graph module automatically maps:
 - explicit flow edges such as `files -> import results -> file.imported`
 
 Modules declare trace points with `registry.add_data_input()`, `registry.add_data_output()`, and `registry.add_flow()`. The graph can render as Mermaid or adjacency text from the Flow Graph screen or report section.
+
+Health checks now validate module dependencies and graph quality. Runtime operations can carry `trace_id` through jobs, imports, artifacts, reports, exports, audit events, and trace events.
 
 ## Development Rules
 

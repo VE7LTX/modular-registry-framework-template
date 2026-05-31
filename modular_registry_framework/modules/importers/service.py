@@ -16,6 +16,7 @@ class ImportResult:
     path: Path
     extension: str
     data: Any
+    trace_id: str | None = None
 
 
 class ImportService:
@@ -23,17 +24,19 @@ class ImportService:
         self.context = context
         self._results: list[ImportResult] = []
 
-    def import_file(self, path: Path) -> ImportResult:
+    def import_file(self, path: Path, trace_id: str | None = None) -> ImportResult:
         logger = logging.getLogger(__name__)
+        if trace_id is None and "runtime_trace" in self.context.registry.list_services():
+            trace_id = self.context.registry.get_service("runtime_trace").new_trace_id()
         logger.debug("Import requested: path=%s suffix=%s", path, path.suffix)
         importer = self.context.registry.get_file_importer(path.suffix)
         data = importer.handler(path, self.context)
-        result = ImportResult(path=path, extension=importer.extension, data=data)
+        result = ImportResult(path=path, extension=importer.extension, data=data, trace_id=trace_id)
         self._results.append(result)
         logger.debug("Import completed: path=%s extension=%s data_type=%s", path, importer.extension, type(data).__name__)
         self.context.registry.emit(
             "file.imported",
-            {"path": str(path), "extension": importer.extension, "label": importer.label},
+            {"path": str(path), "extension": importer.extension, "label": importer.label, "trace_id": trace_id},
         )
         return result
 

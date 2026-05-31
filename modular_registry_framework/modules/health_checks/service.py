@@ -59,3 +59,51 @@ def trace_ports_check(context: AppContext) -> HealthResult:
     status = "pass" if ports else "warn"
     return HealthResult("trace.ports", status, f"{len(ports)} trace ports declared.", "health_checks")
 
+
+def dependency_integrity_check(context: AppContext) -> HealthResult:
+    modules = context.registry.list_modules()
+    module_order = context.registry.list_module_order()
+    positions = {name: index for index, name in enumerate(module_order)}
+    missing: list[str] = []
+    late: list[str] = []
+    for name, metadata in modules.items():
+        for dependency in metadata.dependencies:
+            if dependency not in modules:
+                missing.append(f"{name}->{dependency}")
+            elif positions.get(dependency, -1) > positions.get(name, -1):
+                late.append(f"{name}->{dependency}")
+
+    cycles = _find_cycles(modules)
+    if missing or cycles:
+        details = []
+        if missing:
+            details.append("missing: " + ", ".join(sorted(missing)))
+        if cycles:
+            details.append("cycles: " + "; ".join(" -> ".join(cycle) for cycle in cycles))
+        return HealthResult("modules.dependencies", "fail", "Dependency problems: " + " | ".join(details), "health_checks")
+    if late:
+        return HealthResult("modules.dependencies", "warn", "Dependencies register after dependents: " + ", ".join(sorted(late)), "health_checks")
+    return HealthResult("modules.dependencies", "pass", "Module dependencies are present, acyclic, and ordered.", "health_checks")
+
+
+def _find_cycles(modules: dict) -> list[list[str]]:
+    cycles: list[list[str]] = []
+    visiting: set[str] = set()
+    visited: set[str] = set()
+
+    def visit(name: str, path: list[str]) -> None:
+        if name in visiting:
+            cycle_start = path.index(name) if name in path else 0
+            cycles.append(path[cycle_start:] + [name])
+            return
+        if name in visited or name not in modules:
+            return
+        visiting.add(name)
+        for dependency in modules[name].dependencies:
+            visit(dependency, path + [dependency])
+        visiting.remove(name)
+        visited.add(name)
+
+    for module_name in modules:
+        visit(module_name, [module_name])
+    return cycles

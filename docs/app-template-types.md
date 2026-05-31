@@ -15,6 +15,7 @@ Use:
 - artifact library
 - jobs
 - reports
+- template generator starter: `desktop_workflow`
 
 ## Data Ingestion App
 
@@ -29,6 +30,7 @@ Use:
 - normalized records
 - audit log
 - generated reports
+- template generator starter: `data_ingestion`
 
 ## Case Or Project Workspace
 
@@ -43,6 +45,7 @@ Use:
 - report sections
 - help topics
 - workspace-level settings
+- template generator starter: `case_workspace`
 
 ## AI Agent Tool
 
@@ -58,6 +61,7 @@ Use:
 - prompt packs
 - audit log
 - eval reports
+- template generator starter: `ai_agent_tool`
 
 ## Benchmark And Evaluation App
 
@@ -72,6 +76,7 @@ Use:
 - report sections
 - diagnostics
 - audit log
+- template generator starter: `benchmark_evaluation`
 
 ## Integration Control Panel
 
@@ -86,4 +91,4 @@ Use:
 - audit log
 - jobs
 - reports
-
+- template generator starter: `integration_control_panel`

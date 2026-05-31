@@ -1,4 +1,5 @@
 from pathlib import Path
+import sqlite3
 
 from modular_registry_framework.main import build_context
 
@@ -227,3 +228,66 @@ def test_graph_export_saves_mermaid_and_json(tmp_path: Path):
 
     assert mermaid.path.exists()
     assert graph_json.path.exists()
+
+
+def test_dependency_and_graph_quality_health_checks_pass(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    health_checks = context.registry.get_service("health_checks")
+
+    results = {result.name: result for result in health_checks.run_all()}
+
+    assert results["modules.dependencies"].status == "pass"
+    assert results["flow_graph.quality"].status == "pass"
+
+
+def test_trace_id_propagates_through_job_import_artifact_report_and_export(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    trace_id = context.registry.get_service("runtime_trace").new_trace_id()
+    jobs = context.registry.get_service("jobs")
+    importers = context.registry.get_service("importers")
+    reports = context.registry.get_service("reports")
+    exporters = context.registry.get_service("exporters")
+    artifacts = context.registry.get_service("artifact_library")
+    csv_path = tmp_path / "items.csv"
+    csv_path.write_text("name\nAlpha\n", encoding="utf-8")
+
+    jobs.run_sync("traceable job", lambda: "done", trace_id=trace_id)
+    importers.import_file(csv_path, trace_id=trace_id)
+    artifacts.create_text_artifact("notes", "note.txt", "hello", trace_id=trace_id)
+    reports.save_markdown("trace-report.md", "Trace Report", trace_id=trace_id)
+    exporters.export_artifact("json", {"ok": True}, "trace-export.json", trace_id=trace_id)
+
+    event_names = [event.event_name for event in context.registry.get_service("runtime_trace").list_events(trace_id)]
+
+    assert "job.started" in event_names
+    assert "file.imported" in event_names
+    assert "artifact.created" in event_names
+    assert "report.generated" in event_names
+    assert "data.exported" in event_names
+
+
+def test_audit_and_trace_events_persist_to_sqlite(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    storage = context.registry.get_service("storage")
+    trace_id = context.registry.get_service("runtime_trace").new_trace_id()
+
+    context.registry.emit("test.persisted", {"trace_id": trace_id})
+
+    with sqlite3.connect(storage.path) as connection:
+        audit_count = connection.execute("SELECT COUNT(*) FROM audit_events").fetchone()[0]
+        trace_count = connection.execute("SELECT COUNT(*) FROM trace_events WHERE trace_id = ?", (trace_id,)).fetchone()[0]
+
+    assert audit_count >= 1
+    assert trace_count == 1
+
+
+def test_template_generator_creates_starter_files(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    generator = context.registry.get_service("template_generator")
+    target = tmp_path / "starter"
+
+    generator.create_app("data_ingestion", target)
+
+    assert (target / "README.md").exists()
+    assert (target / "settings.json").exists()
+    assert (target / "modules.txt").read_text(encoding="utf-8").splitlines()[0] == "storage"

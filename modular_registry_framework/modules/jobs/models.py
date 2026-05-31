@@ -12,6 +12,6 @@ class JobRecord:
     status: str
     result: Any = None
     error: str | None = None
+    trace_id: str | None = None
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     finished_at: datetime | None = None
-

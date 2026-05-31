@@ -13,12 +13,13 @@ class StorageService:
         self.context = context
         self.path = context.base_dir / relative_path
 
-    def connect(self) -> sqlite3.Connection:
+    def connect(self, emit_event: bool = True) -> sqlite3.Connection:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         connection = sqlite3.connect(self.path)
         connection.execute("PRAGMA temp_store = MEMORY")
         connection.execute("PRAGMA journal_mode = MEMORY")
-        self.context.registry.emit("storage.opened", {"path": str(self.path)})
+        if emit_event:
+            self.context.registry.emit("storage.opened", {"path": str(self.path)})
         return connection
 
     def initialize(self) -> None:

@@ -10,12 +10,13 @@ class ReportService:
     def __init__(self, context: AppContext) -> None:
         self.context = context
 
-    def render_markdown(self, title: str = "Application Report") -> str:
+    def render_markdown(self, title: str = "Application Report", trace_id: str | None = None) -> str:
         logging.getLogger(__name__).debug("Rendering Markdown report: title=%s", title)
         lines = [
             f"# {title}",
             "",
             f"Generated: {datetime.now(timezone.utc).isoformat()}",
+            f"Trace ID: {trace_id or 'none'}",
             "",
         ]
         for section in self.context.registry.list_report_sections():
@@ -23,12 +24,14 @@ class ReportService:
             lines.extend([f"## {section.title}", "", section.renderer(self.context), ""])
         return "\n".join(lines)
 
-    def save_markdown(self, name: str = "app-report.md", title: str = "Application Report"):
+    def save_markdown(self, name: str = "app-report.md", title: str = "Application Report", trace_id: str | None = None):
         logging.getLogger(__name__).debug("Saving Markdown report: name=%s title=%s", name, title)
-        content = self.render_markdown(title)
+        if trace_id is None and "runtime_trace" in self.context.registry.list_services():
+            trace_id = self.context.registry.get_service("runtime_trace").new_trace_id()
+        content = self.render_markdown(title, trace_id=trace_id)
         artifact_library = self.context.registry.get_service("artifact_library")
-        record = artifact_library.create_text_artifact("reports", name, content)
-        self.context.registry.emit("report.generated", {"path": str(record.path), "title": title})
+        record = artifact_library.create_text_artifact("reports", name, content, trace_id=trace_id)
+        self.context.registry.emit("report.generated", {"path": str(record.path), "title": title, "trace_id": trace_id})
         return record
 
 

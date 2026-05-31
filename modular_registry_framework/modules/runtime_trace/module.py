@@ -9,7 +9,7 @@ from .service import RuntimeTraceService
 
 
 def register(registry: Registry, context: AppContext) -> None:
-    service = RuntimeTraceService()
+    service = RuntimeTraceService(context)
     registry.add_module(
         ModuleMetadata(
             name="runtime_trace",
@@ -29,4 +29,3 @@ def register(registry: Registry, context: AppContext) -> None:
 
     for key, content in HELP_TOPICS.items():
         registry.add_help_topic(key, content)
-

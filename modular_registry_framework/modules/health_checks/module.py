@@ -5,7 +5,7 @@ from modular_registry_framework.core.registry import ModuleMetadata, Registry
 
 from .help import HELP_TOPICS
 from .screens import build_health_checks_screen
-from .service import HealthCheckService, modules_registered_check, trace_ports_check
+from .service import HealthCheckService, dependency_integrity_check, modules_registered_check, trace_ports_check
 
 
 def register(registry: Registry, context: AppContext) -> None:
@@ -19,6 +19,7 @@ def register(registry: Registry, context: AppContext) -> None:
     )
     registry.add_service("health_checks", HealthCheckService(context))
     registry.add_health_check("modules.registered", "Modules registered", modules_registered_check, "health_checks")
+    registry.add_health_check("modules.dependencies", "Module dependencies", dependency_integrity_check, "health_checks")
     registry.add_health_check("trace.ports", "Trace ports declared", trace_ports_check, "health_checks")
     registry.add_data_input("health_checks", "registered checks", "metadata", "Health checks contributed by modules.")
     registry.add_data_output("health_checks", "health results", "records", "Pass/warn/fail readiness results.")
@@ -28,4 +29,3 @@ def register(registry: Registry, context: AppContext) -> None:
 
     for key, content in HELP_TOPICS.items():
         registry.add_help_topic(key, content)
-

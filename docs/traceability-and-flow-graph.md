@@ -105,14 +105,11 @@ The endpoint strings are intentionally simple. Stable prefixes are:
 
 ## What To Add Next
 
-The current graph is in-process and registry-based. Good next upgrades are:
+The current graph is registry-based and now feeds health checks. Good next upgrades are:
 
-- runtime trace IDs for jobs, imports, artifacts, and reports
-- persisted graph snapshots under `artifacts/graphs/`
+- trace IDs on API client calls and record changes
 - Graphviz export
-- JSON graph export
 - dependency validation before app startup
 - dead-port detection for outputs nobody consumes
 - graph filters by module, event, or artifact
 - clickable graph nodes in the desktop UI
-

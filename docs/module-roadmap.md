@@ -6,6 +6,14 @@ This is the next build queue for turning the template into a broad reusable app 
 
 The first baseline for these modules now exists in the template. The next work is to deepen them from generic skeletons into production-ready foundations.
 
+## Recently Deepened
+
+- `health_checks` now validates module dependencies and startup ordering.
+- `flow_graph` now contributes graph quality checks.
+- `jobs`, `importers`, `artifact_library`, `reports`, and `exporters` can carry `trace_id`.
+- `audit_log` and `runtime_trace` persist to SQLite when storage is available.
+- `template_generator` creates starter folders for six app families.
+
 ### api_clients
 
 Shared pattern for external APIs.
@@ -26,6 +34,8 @@ Next depth:
 - raw payload artifact capture
 - redacted request/response logging
 - events such as `api.requested`, `api.succeeded`, `api.failed`, `api.rate_limited`
+- request/response artifact capture through `artifact_library`
+- trace ID propagation through API calls
 
 Useful for Oanda, Kraken, HubSpot, Amazon PAAPI, Personal AI, OpenClaw, REW API, and future integrations.
 
@@ -61,6 +71,7 @@ Baseline shipped:
 - backup
 - health check
 - storage report section
+- persistent audit and trace tables
 
 Next depth:
 
@@ -119,6 +130,7 @@ Baseline shipped:
 - exporter registry contribution point
 - JSON, JSONL, text, Markdown, CSV, XML, YAML, and YML serializers
 - export events
+- artifact saves through `export_artifact`
 
 Next depth:
 
@@ -188,7 +200,7 @@ Next depth:
 
 ## Template Families
 
-Once the generic modules above exist, build starter templates:
+Starter folder generation now exists for:
 
 - `desktop_workflow`
 - `data_ingestion`
@@ -205,3 +217,11 @@ Each starter should declare:
 - example flow graph
 - run/test commands
 - app-specific README section
+
+Next depth:
+
+- generate importable Python packages, not only starter folders
+- generate tests per template family
+- generate `.env.example`
+- generate app-specific enabled module lists
+- optionally copy runnable shell entry points

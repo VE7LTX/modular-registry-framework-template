@@ -9,7 +9,7 @@ from .service import AuditLogService
 
 
 def register(registry: Registry, context: AppContext) -> None:
-    service = AuditLogService()
+    service = AuditLogService(context)
     registry.add_module(
         ModuleMetadata(
             name="audit_log",

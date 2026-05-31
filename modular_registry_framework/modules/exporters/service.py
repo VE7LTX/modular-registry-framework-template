@@ -13,11 +13,25 @@ class ExportService:
     def __init__(self, context: AppContext) -> None:
         self.context = context
 
-    def export(self, format_name: str, data: Any) -> str | bytes:
+    def export(self, format_name: str, data: Any, trace_id: str | None = None) -> str | bytes:
         exporter = self.context.registry.get_exporter(format_name)
+        if trace_id is None and "runtime_trace" in self.context.registry.list_services():
+            trace_id = self.context.registry.get_service("runtime_trace").new_trace_id()
         output = exporter.handler(data)
-        self.context.registry.emit("data.exported", {"format": exporter.format_name, "extension": exporter.extension})
+        self.context.registry.emit(
+            "data.exported",
+            {"format": exporter.format_name, "extension": exporter.extension, "trace_id": trace_id},
+        )
         return output
+
+    def export_artifact(self, format_name: str, data: Any, name: str | None = None, trace_id: str | None = None):
+        exporter = self.context.registry.get_exporter(format_name)
+        output = self.export(format_name, data, trace_id=trace_id)
+        if isinstance(output, bytes):
+            output = output.decode("utf-8")
+        artifact_name = name or f"export{exporter.extension}"
+        artifacts = self.context.registry.get_service("artifact_library")
+        return artifacts.create_text_artifact("exports", artifact_name, output, trace_id=trace_id)
 
 
 def export_json(data: Any) -> str:

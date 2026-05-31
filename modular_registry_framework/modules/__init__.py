@@ -17,6 +17,7 @@ from .reports import module as reports
 from .runtime_trace import module as runtime_trace
 from .settings_manager import module as settings_manager
 from .storage import module as storage
+from .template_generator import module as template_generator
 
 MODULES = (
     audit_log,
@@ -37,6 +38,7 @@ MODULES = (
     dashboard,
     flow_graph,
     graph_export,
+    template_generator,
     example,
 )
 

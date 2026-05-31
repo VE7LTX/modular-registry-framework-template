@@ -97,7 +97,7 @@ Runs readiness checks contributed by modules.
 Registers:
 
 - service: `health_checks`
-- health checks: `modules.registered`, `trace.ports`
+- health checks: `modules.registered`, `modules.dependencies`, `trace.ports`
 - screen: `System / Health`
 - inputs: registered checks
 - outputs: health results
@@ -129,6 +129,10 @@ Registers:
 - inputs: trace events
 - outputs: trace report
 
+Persistence:
+
+- stores trace events in SQLite when `storage` is available
+
 ### storage
 
 Provides SQLite lifecycle, initialization, health check, and backup baseline.
@@ -142,6 +146,11 @@ Registers:
 - screen: `System / Storage`
 - inputs: database path
 - outputs: SQLite database
+
+Persistence:
+
+- `audit_log` stores audit events in `audit_events`
+- `runtime_trace` stores trace events in `trace_events`
 
 ## Work Modules
 
@@ -195,6 +204,11 @@ Registers:
 - outputs: export text
 - events: `data.exported`
 
+Commands:
+
+- `exporters.export`
+- `exporters.export_artifact`
+
 ### records
 
 Provides a generic in-memory record pattern.
@@ -219,6 +233,27 @@ Registers:
 - screen: `Integrations / API Clients`
 - inputs: requests
 - outputs: responses
+
+### template_generator
+
+Creates starter app folders for common application families.
+
+Registers:
+
+- service: `template_generator`
+- command: `template_generator.create_app`
+- screen: `Tools / Template Generator`
+- inputs: template selection
+- outputs: app starter folder
+
+Starter families:
+
+- `desktop_workflow`
+- `data_ingestion`
+- `case_workspace`
+- `ai_agent_tool`
+- `benchmark_evaluation`
+- `integration_control_panel`
 
 ### reports
 

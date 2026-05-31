@@ -37,6 +37,7 @@ def test_registry_tracks_module_metadata():
     )
 
     assert registry.list_modules()["records"].dependencies == ("audit_log",)
+    assert registry.list_module_order() == ["records"]
 
 
 def test_registry_supports_wildcard_event_handlers():

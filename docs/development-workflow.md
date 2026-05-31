@@ -47,6 +47,7 @@ Before a module is considered complete:
 - meaningful events are emitted after important outcomes.
 - inputs, outputs, and flows are declared for traceability.
 - debug logs exist around important operations.
+- trace-aware operations accept or create `trace_id`.
 - tests cover service behavior and registry contributions.
 - docs mention new public contribution points.
 

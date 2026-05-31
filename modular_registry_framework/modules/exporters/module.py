@@ -28,6 +28,8 @@ def register(registry: Registry, context: AppContext) -> None:
         )
     )
     registry.add_service("exporters", service)
+    registry.add_command("exporters.export", service.export)
+    registry.add_command("exporters.export_artifact", service.export_artifact)
     registry.add_exporter("json", ".json", export_json, "JSON", "Pretty JSON document.")
     registry.add_exporter("jsonl", ".jsonl", export_jsonl, "JSONL", "One JSON object per line.")
     registry.add_exporter("txt", ".txt", export_text, "Text", "Plain text output.")
@@ -44,4 +46,3 @@ def register(registry: Registry, context: AppContext) -> None:
 
     for key, content in HELP_TOPICS.items():
         registry.add_help_topic(key, content)
-
