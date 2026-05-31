@@ -19,8 +19,10 @@ def register(registry: Registry, context: AppContext) -> None:
     )
     registry.add_service("audit_log", service)
     registry.on("*", service.handle_registry_event)
+    registry.add_data_input("audit_log", "registry events", "event", "Wildcard event stream from registry.emit().")
+    registry.add_data_output("audit_log", "audit events", "records", "Recent in-memory event history.")
+    registry.add_flow("port:audit_log:input:registry events", "port:audit_log:output:audit events", "record events", "data")
     registry.add_screen("System", "Audit Log", build_audit_log_screen, order=80)
 
     for key, content in HELP_TOPICS.items():
         registry.add_help_topic(key, content)
-

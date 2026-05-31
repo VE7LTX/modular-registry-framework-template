@@ -18,8 +18,11 @@ def register(registry: Registry, context: AppContext) -> None:
         )
     )
     registry.add_service("jobs", JobService(context))
+    registry.add_data_input("jobs", "callable work", "task", "Long-running or important unit of work.")
+    registry.add_data_output("jobs", "job records", "records", "Started, completed, or failed job records.")
+    registry.add_flow("port:jobs:input:callable work", "port:jobs:output:job records", "run job", "data")
+    registry.add_flow("port:jobs:output:job records", "event:job.completed", "emit completion event", "event")
     registry.add_screen("System", "Jobs", build_jobs_screen, order=60)
 
     for key, content in HELP_TOPICS.items():
         registry.add_help_topic(key, content)
-

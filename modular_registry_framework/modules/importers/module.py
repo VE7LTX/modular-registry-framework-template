@@ -26,8 +26,11 @@ def register(registry: Registry, context: AppContext) -> None:
     registry.add_file_importer(".xml", load_xml, "XML", "XML document summary.")
     registry.add_file_importer(".yaml", load_flat_yaml, "YAML", "Flat YAML mapping.")
     registry.add_file_importer(".yml", load_flat_yaml, "YML", "Flat YAML mapping.")
+    registry.add_data_input("importers", "files", "file", "CSV, JSON, JSONL, XML, Markdown, text, YAML, and YML files.")
+    registry.add_data_output("importers", "import results", "records", "Parsed file data returned as Python objects.")
+    registry.add_flow("port:importers:input:files", "port:importers:output:import results", "parse files", "data")
+    registry.add_flow("port:importers:output:import results", "event:file.imported", "emit import event", "event")
     registry.add_screen("Tools", "Importers", build_importers_screen, order=20)
 
     for key, content in HELP_TOPICS.items():
         registry.add_help_topic(key, content)
-

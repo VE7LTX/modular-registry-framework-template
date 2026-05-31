@@ -59,3 +59,15 @@ def test_registry_tracks_importers_and_report_sections():
     assert ".csv" in registry.list_file_importers()
     assert registry.get_file_importer(".csv").label == "CSV"
     assert registry.list_report_sections()[0].name == "summary"
+
+
+def test_registry_tracks_data_ports_and_flows():
+    registry = Registry()
+
+    registry.add_data_input("importers", "files", "file")
+    registry.add_data_output("importers", "records", "records")
+    registry.add_flow("port:importers:input:files", "port:importers:output:records", "parse")
+
+    assert registry.list_data_ports()[0].direction == "input"
+    assert registry.list_data_ports()[1].direction == "output"
+    assert registry.list_flows()[0].label == "parse"

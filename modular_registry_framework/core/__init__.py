@@ -1,6 +1,8 @@
 from .context import AppContext
 from .logging_config import configure_logging
 from .registry import (
+    DataPortRegistration,
+    FlowRegistration,
     ImporterRegistration,
     ModuleMetadata,
     Registry,
@@ -12,6 +14,8 @@ from .settings import Settings
 
 __all__ = [
     "AppContext",
+    "DataPortRegistration",
+    "FlowRegistration",
     "ImporterRegistration",
     "ModuleMetadata",
     "Registry",

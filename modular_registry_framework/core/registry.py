@@ -53,6 +53,23 @@ class ReportSectionRegistration:
     order: int = 100
 
 
+@dataclass(frozen=True, slots=True)
+class DataPortRegistration:
+    module: str
+    name: str
+    direction: str
+    kind: str
+    description: str = ""
+
+
+@dataclass(frozen=True, slots=True)
+class FlowRegistration:
+    source: str
+    target: str
+    label: str
+    kind: str = "data"
+
+
 class Registry:
     """Directory of capabilities contributed by app modules."""
 
@@ -65,6 +82,8 @@ class Registry:
         self._commands: dict[str, CommandHandler] = {}
         self._importers: dict[str, ImporterRegistration] = {}
         self._report_sections: list[ReportSectionRegistration] = []
+        self._data_ports: list[DataPortRegistration] = []
+        self._flows: list[FlowRegistration] = []
         self._event_handlers: dict[str, list[EventHandler]] = defaultdict(list)
 
     def add_module(self, metadata: ModuleMetadata) -> None:
@@ -187,6 +206,32 @@ class Registry:
 
     def list_report_sections(self) -> list[ReportSectionRegistration]:
         return sorted(self._report_sections, key=lambda section: (section.order, section.title))
+
+    def add_data_input(self, module: str, name: str, kind: str, description: str = "") -> None:
+        self._add_data_port(module, name, "input", kind, description)
+
+    def add_data_output(self, module: str, name: str, kind: str, description: str = "") -> None:
+        self._add_data_port(module, name, "output", kind, description)
+
+    def _add_data_port(self, module: str, name: str, direction: str, kind: str, description: str = "") -> None:
+        port = DataPortRegistration(module, name, direction, kind, description)
+        if port in self._data_ports:
+            raise ValueError(f"Data port is already registered: {module}.{name}.{direction}")
+        self._data_ports.append(port)
+        logging.getLogger(__name__).debug("Registered data port: %s", port)
+
+    def list_data_ports(self) -> list[DataPortRegistration]:
+        return sorted(self._data_ports, key=lambda port: (port.module, port.direction, port.name))
+
+    def add_flow(self, source: str, target: str, label: str, kind: str = "data") -> None:
+        flow = FlowRegistration(source, target, label, kind)
+        if flow in self._flows:
+            raise ValueError(f"Flow is already registered: {source} -> {target} ({label})")
+        self._flows.append(flow)
+        logging.getLogger(__name__).debug("Registered flow: %s", flow)
+
+    def list_flows(self) -> list[FlowRegistration]:
+        return sorted(self._flows, key=lambda flow: (flow.kind, flow.source, flow.target, flow.label))
 
     def on(self, event_name: str, handler: EventHandler) -> None:
         self._event_handlers[event_name].append(handler)

@@ -28,8 +28,11 @@ def register(registry: Registry, context: AppContext) -> None:
         render_registered_capabilities,
         order=20,
     )
+    registry.add_data_input("reports", "report sections", "metadata", "Registered report section renderers.")
+    registry.add_data_output("reports", "markdown report", "artifact", "Markdown report content saved through artifacts.")
+    registry.add_flow("port:reports:input:report sections", "port:reports:output:markdown report", "render sections", "data")
+    registry.add_flow("port:reports:output:markdown report", "event:report.generated", "emit report event", "event")
     registry.add_screen("Tools", "Reports", build_reports_screen, order=30)
 
     for key, content in HELP_TOPICS.items():
         registry.add_help_topic(key, content)
-

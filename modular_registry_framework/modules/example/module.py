@@ -18,6 +18,10 @@ def register(registry: Registry, context: AppContext) -> None:
         )
     )
     registry.add_service("example", ExampleService(registry))
+    registry.add_data_input("example", "item name", "user_input", "Name entered in the example screen.")
+    registry.add_data_output("example", "example items", "records", "In-memory example records.")
+    registry.add_flow("port:example:input:item name", "port:example:output:example items", "create item", "data")
+    registry.add_flow("port:example:output:example items", "event:example.item_created", "emit item event", "event")
     registry.add_screen("Examples", "Example Module", build_example_screen, order=10)
     registry.add_setting(
         "example.default_status",

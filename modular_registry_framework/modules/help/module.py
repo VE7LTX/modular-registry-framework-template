@@ -19,8 +19,10 @@ def register(registry: Registry, context: AppContext) -> None:
     service = HelpService(context)
     registry.add_service("help", service)
     registry.add_command("help.render_topic_index", service.render_topic_index)
+    registry.add_data_input("help", "help topics", "metadata", "Help text registered by modules.")
+    registry.add_data_output("help", "topic index", "view", "Browsable and renderable help topic index.")
+    registry.add_flow("port:help:input:help topics", "port:help:output:topic index", "render help", "data")
     registry.add_screen("System", "Help", build_help_screen, order=10)
 
     for key, content in HELP_TOPICS.items():
         registry.add_help_topic(key, content)
-

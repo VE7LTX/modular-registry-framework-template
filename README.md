@@ -189,6 +189,7 @@ Use events for meaningful cross-module actions, not every small UI click.
 - `modular_registry_framework/modules/jobs/` - common job lifecycle for imports, scans, reports, and syncs
 - `modular_registry_framework/modules/importers/` - CSV, JSON, JSONL, XML, Markdown/text, YAML, and YML import surface
 - `modular_registry_framework/modules/reports/` - Markdown report generation from registered sections
+- `modular_registry_framework/modules/flow_graph/` - automatic Mermaid graph of modules, capabilities, events, inputs, outputs, and flows
 - `modular_registry_framework/modules/example/` - minimal feature module
 - `modular_registry_framework/desktop/shell.py` - small Tkinter shell that builds navigation from registered screens
 - `modular_registry_framework/scaffold.py` - CLI for creating a new module folder
@@ -201,6 +202,7 @@ Use events for meaningful cross-module actions, not every small UI click.
 - `docs/app-template-types.md` - template families for this workspace
 - `docs/example-cross-module-flow.md` - how modules cooperate at runtime
 - `docs/debugging-and-logging.md` - debug mode and logging operations
+- `docs/traceability-and-flow-graph.md` - automatic module graph and input/output tracing
 - `tests/` - tests for registry, example module, and scaffolding
 
 ## Run The Example App
@@ -266,6 +268,18 @@ Debugging can be switched on from the Diagnostics screen or by setting:
 
 When debug mode is enabled, registry events are logged and the Diagnostics screen shows active handlers, logging level, and logging outputs.
 Logging is configured at the Python root logger, so framework modules inherit the core level top down. In `DEBUG`, the framework logs startup, module registration, services, screens, settings, importers, report sections, event handlers, events, jobs, imports, reports, artifacts, and settings saves.
+
+## Traceability Graph
+
+The Flow Graph module automatically maps:
+
+- modules and dependencies
+- services and screens
+- settings, commands, importers, report sections, and events
+- declared inputs and outputs
+- explicit flow edges such as `files -> import results -> file.imported`
+
+Modules declare trace points with `registry.add_data_input()`, `registry.add_data_output()`, and `registry.add_flow()`. The graph can render as Mermaid or adjacency text from the Flow Graph screen or report section.
 
 ## Development Rules
 

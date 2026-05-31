@@ -3,6 +3,7 @@ from .audit_log import module as audit_log
 from .dashboard import module as dashboard
 from .diagnostics import module as diagnostics
 from .example import module as example
+from .flow_graph import module as flow_graph
 from .help import module as help
 from .importers import module as importers
 from .jobs import module as jobs
@@ -19,6 +20,7 @@ MODULES = (
     reports,
     help,
     dashboard,
+    flow_graph,
     example,
 )
 

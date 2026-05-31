@@ -17,6 +17,7 @@ def test_context_registers_universal_modules(tmp_path: Path):
     assert "importers" in modules
     assert "reports" in modules
     assert "help" in modules
+    assert "flow_graph" in modules
 
 
 def test_audit_log_records_registry_events(tmp_path: Path):
@@ -75,6 +76,21 @@ def test_reports_render_registered_sections(tmp_path: Path):
     assert "# System Report" in markdown
     assert "## Module Inventory" in markdown
     assert "## Registered Capabilities" in markdown
+    assert "## System Flow Graph" in markdown
+
+
+def test_flow_graph_renders_declared_inputs_outputs_and_edges(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    flow_graph = context.registry.get_service("flow_graph")
+
+    mermaid = flow_graph.render_mermaid()
+    adjacency = flow_graph.render_adjacency()
+
+    assert "flowchart LR" in mermaid
+    assert "input: files" in mermaid
+    assert "output: import results" in mermaid
+    assert "parse files" in adjacency
+    assert "emit report event" in adjacency
 
 
 def test_diagnostics_toggle_debug_mode(tmp_path: Path):
