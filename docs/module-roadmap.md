@@ -15,6 +15,23 @@ The first baseline for these modules now exists in the template. The next work i
 - `template_generator` creates starter folders for six app families.
 - `mrf` CLI exposes health, graph, template, scan, secrets, module-test, runbook, and packs commands.
 - `workspace_scanner`, `secret_scanner`, `module_test_harness`, `module_packs`, and `runbook_generator` now exist as baseline modules.
+- `view_models`, `command_palette`, `tui_shell`, `settings_editor`, `log_viewer`, `artifact_browser`, and `project_repair` now exist as baseline modules.
+
+## UI Surface Direction
+
+The framework should keep CLI, TUI, and Tkinter aligned through shared services and view models:
+
+- CLI is for automation and one-shot commands.
+- TUI is for terminal dashboards and SSH-friendly workflows.
+- Tkinter is for operator-facing local desktop tools.
+
+Next depth:
+
+- interactive TUI navigation
+- command parameter prompts
+- live job/log refresh
+- reusable list/detail widgets for Tkinter and TUI
+- background job queue with cancellation
 
 ### api_clients
 

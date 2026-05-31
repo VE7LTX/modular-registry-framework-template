@@ -71,3 +71,77 @@ def test_cli_module_test_outputs_pytest(tmp_path: Path, monkeypatch, capsys):
 
     output = capsys.readouterr().out
     assert "test_example_module_registers" in output
+
+
+def test_view_models_command_palette_and_tui_render(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+
+    modules_text = context.registry.get_service("view_models").modules_table().render_text()
+    commands = context.registry.get_service("command_palette").search("health")
+    tui = context.registry.get_service("tui_shell").render_dashboard()
+
+    assert "Modules" in modules_text
+    assert any(command.name == "view.health" for command in commands)
+    assert "Modular Registry Framework TUI" in tui
+
+
+def test_settings_editor_updates_values(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    editor = context.registry.get_service("settings_editor")
+
+    value = editor.set_from_text("debug.enabled", "true")
+
+    assert value is True
+    assert context.settings.get("debug.enabled") is True
+
+
+def test_log_viewer_tails_configured_log(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    log_path = tmp_path / "logs" / "app.log"
+    log_path.parent.mkdir()
+    log_path.write_text("2026 INFO app: hello\n2026 ERROR app: nope\n", encoding="utf-8")
+
+    lines = context.registry.get_service("log_viewer").tail(level="ERROR")
+
+    assert lines == ["2026 ERROR app: nope"]
+
+
+def test_artifact_browser_lists_and_previews(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    artifact = context.registry.get_service("artifact_library").create_text_artifact("notes", "note.md", "# Note")
+    browser = context.registry.get_service("artifact_browser")
+
+    assert artifact.path in browser.list_files()
+    assert browser.preview(artifact.path) == "# Note"
+
+
+def test_project_repair_plans_and_applies_baseline(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    repair = context.registry.get_service("project_repair")
+    target = tmp_path / "rough_project"
+
+    plan = repair.plan(target)
+    written = repair.apply_baseline(target)
+
+    assert "create README.md" in plan
+    assert target / "README.md" in written
+
+
+def test_cli_tui_and_commands_output(tmp_path: Path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+
+    assert cli_main(["tui"]) == 0
+    assert "Modular Registry Framework TUI" in capsys.readouterr().out
+
+    assert cli_main(["commands", "health"]) == 0
+    assert "view.health" in capsys.readouterr().out
+
+
+def test_cli_repair_apply_writes_baseline(tmp_path: Path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    target = tmp_path / "rough"
+
+    assert cli_main(["repair", "apply", str(target)]) == 0
+
+    assert (target / ".gitignore").exists()
+    assert "Wrote" in capsys.readouterr().out

@@ -8,6 +8,14 @@ from modular_registry_framework.core.context import AppContext
 from modular_registry_framework.modules.health_checks.models import HealthResult
 
 
+class AutoClosingConnection(sqlite3.Connection):
+    def __exit__(self, exc_type, exc_value, traceback) -> bool:
+        try:
+            return super().__exit__(exc_type, exc_value, traceback)
+        finally:
+            self.close()
+
+
 class StorageService:
     def __init__(self, context: AppContext, relative_path: str = "data/app.sqlite3") -> None:
         self.context = context
@@ -15,7 +23,7 @@ class StorageService:
 
     def connect(self, emit_event: bool = True) -> sqlite3.Connection:
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        connection = sqlite3.connect(self.path)
+        connection = sqlite3.connect(self.path, factory=AutoClosingConnection)
         connection.execute("PRAGMA temp_store = MEMORY")
         connection.execute("PRAGMA journal_mode = MEMORY")
         if emit_event:

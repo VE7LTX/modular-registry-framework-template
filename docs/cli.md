@@ -16,6 +16,14 @@ mrf module-test inventory --tests-dir .\tests
 mrf runbook
 mrf runbook --save
 mrf packs
+mrf tui
+mrf commands health
+mrf settings show
+mrf settings set debug.enabled true
+mrf logs --level ERROR
+mrf artifacts list
+mrf repair plan .\SomeProject
+mrf repair apply .\SomeProject
 ```
 
 ## Purpose
@@ -30,4 +38,9 @@ Use the CLI for automation, repository cleanup, CI-style checks, and one-off pro
 - `module-test`: generate a baseline pytest file for a module.
 - `runbook`: render or save operational documentation.
 - `packs`: list module packs for template families.
-
+- `tui`: render the terminal dashboard once.
+- `commands`: search registered commands.
+- `settings`: show, edit, or save settings.
+- `logs`: tail the configured app log.
+- `artifacts`: list or preview generated artifacts.
+- `repair`: plan or apply project baseline repairs.

@@ -243,6 +243,12 @@ mrf secrets .\MyProject
 mrf module-test inventory --tests-dir .\tests
 mrf runbook
 mrf packs
+mrf tui
+mrf commands health
+mrf settings show
+mrf logs --level ERROR
+mrf artifacts list
+mrf repair plan .\SomeProject
 ```
 
 ## Scaffold A Module

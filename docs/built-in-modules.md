@@ -4,6 +4,42 @@ The template now ships with a universal module set. These modules are intentiona
 
 ## System Modules
 
+### view_models
+
+Provides shared display tables for CLI, TUI, and Tkinter.
+
+Registers:
+
+- service: `view_models`
+- commands: `view.modules`, `view.health`
+- screen: `System / View Models`
+- inputs: registry data
+- outputs: table views
+
+### command_palette
+
+Searches and runs registered commands.
+
+Registers:
+
+- service: `command_palette`
+- commands: `commands.search`, `commands.run`
+- screen: `System / Command Palette`
+- inputs: registered commands
+- outputs: command execution events
+
+### tui_shell
+
+Renders a dependency-free terminal dashboard.
+
+Registers:
+
+- service: `tui_shell`
+- command: `tui.render`
+- screen: `System / TUI Preview`
+- inputs: view models
+- outputs: terminal dashboard
+
 ### dashboard
 
 Shows the live map of registered modules and capabilities.
@@ -39,6 +75,18 @@ Registers:
 - screen: `System / Settings`
 - inputs: registered settings
 - outputs: settings files
+
+### settings_editor
+
+Provides shared settings edit/save helpers.
+
+Registers:
+
+- service: `settings_editor`
+- commands: `settings.edit`, `settings.editor_save`
+- screen: `System / Settings Editor`
+- inputs: setting text
+- outputs: settings values
 
 ### diagnostics
 
@@ -151,6 +199,30 @@ Persistence:
 
 - `audit_log` stores audit events in `audit_events`
 - `runtime_trace` stores trace events in `trace_events`
+
+### log_viewer
+
+Tails and filters the configured app log.
+
+Registers:
+
+- service: `log_viewer`
+- command: `logs.tail`
+- screen: `System / Logs`
+- inputs: log file
+- outputs: log lines
+
+### artifact_browser
+
+Lists and previews generated artifacts.
+
+Registers:
+
+- service: `artifact_browser`
+- commands: `artifacts.list`, `artifacts.preview`
+- screen: `System / Artifact Browser`
+- inputs: artifact files
+- outputs: artifact previews
 
 ## Work Modules
 
@@ -314,6 +386,18 @@ Registers:
 - screen: `Tools / Secret Scanner`
 - inputs: source files
 - outputs: redacted findings
+
+### project_repair
+
+Plans and creates missing baseline project files.
+
+Registers:
+
+- service: `project_repair`
+- commands: `project_repair.plan`, `project_repair.apply`
+- screen: `Tools / Project Repair`
+- inputs: project folder
+- outputs: baseline files
 
 ### reports
 
