@@ -179,11 +179,28 @@ Use events for meaningful cross-module actions, not every small UI click.
 - `modular_registry_framework/core/registry.py` - capability registry
 - `modular_registry_framework/core/context.py` - shared runtime context
 - `modular_registry_framework/core/settings.py` - settings object with JSON, JSONL, XML, YAML, and YML load/save support
+- `modular_registry_framework/core/logging_config.py` - switchable logging and debug-mode setup
+- `modular_registry_framework/modules/dashboard/` - live map of registered modules and capabilities
+- `modular_registry_framework/modules/help/` - built-in help topic browser
+- `modular_registry_framework/modules/settings_manager/` - registered settings viewer and saver
+- `modular_registry_framework/modules/diagnostics/` - debug mode, logging level, handlers, and runtime inspection
+- `modular_registry_framework/modules/audit_log/` - recent event history
+- `modular_registry_framework/modules/artifact_library/` - generated file and export tracking
+- `modular_registry_framework/modules/jobs/` - common job lifecycle for imports, scans, reports, and syncs
+- `modular_registry_framework/modules/importers/` - CSV, JSON, JSONL, XML, Markdown/text, YAML, and YML import surface
+- `modular_registry_framework/modules/reports/` - Markdown report generation from registered sections
 - `modular_registry_framework/modules/example/` - minimal feature module
 - `modular_registry_framework/desktop/shell.py` - small Tkinter shell that builds navigation from registered screens
 - `modular_registry_framework/scaffold.py` - CLI for creating a new module folder
 - `docs/architecture.md` - full architecture note
 - `docs/development-workflow.md` - practical workflow notes
+- `docs/module-lifecycle.md` - startup and registration flow
+- `docs/building-a-module.md` - module file responsibilities
+- `docs/events-and-hooks.md` - event naming and payload guidance
+- `docs/service-patterns.md` - how services keep screens thin
+- `docs/app-template-types.md` - template families for this workspace
+- `docs/example-cross-module-flow.md` - how modules cooperate at runtime
+- `docs/debugging-and-logging.md` - debug mode and logging operations
 - `tests/` - tests for registry, example module, and scaffolding
 
 ## Run The Example App
@@ -232,6 +249,23 @@ Settings load and save based on the file extension:
 - `.yaml` / `.yml` - flat key/value mapping with JSON-compatible values
 
 JSON remains the default format used by the example app.
+
+## Debugging And Logging
+
+Debugging can be switched on from the Diagnostics screen or by setting:
+
+```json
+{
+  "debug.enabled": true,
+  "logging.level": "DEBUG",
+  "logging.console_enabled": true,
+  "logging.file_enabled": true,
+  "logging.file": "logs/app.log"
+}
+```
+
+When debug mode is enabled, registry events are logged and the Diagnostics screen shows active handlers, logging level, and logging outputs.
+Logging is configured at the Python root logger, so framework modules inherit the core level top down. In `DEBUG`, the framework logs startup, module registration, services, screens, settings, importers, report sections, event handlers, events, jobs, imports, reports, artifacts, and settings saves.
 
 ## Development Rules
 

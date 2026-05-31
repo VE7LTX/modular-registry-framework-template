@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -15,10 +16,13 @@ class Settings:
 
     @classmethod
     def load(cls, path: Path) -> "Settings":
+        logger = logging.getLogger(__name__)
         if not path.exists():
+            logger.debug("Settings file not found, using empty settings: %s", path)
             return cls()
 
         extension = _settings_extension(path)
+        logger.debug("Loading settings from %s", path)
         if extension == ".json":
             with path.open("r", encoding="utf-8") as file:
                 return cls(json.load(file))
@@ -32,8 +36,10 @@ class Settings:
         raise ValueError(f"Unsupported settings format: {path.suffix}")
 
     def save(self, path: Path) -> None:
+        logger = logging.getLogger(__name__)
         path.parent.mkdir(parents=True, exist_ok=True)
         extension = _settings_extension(path)
+        logger.debug("Saving settings to %s", path)
 
         if extension == ".json":
             with path.open("w", encoding="utf-8") as file:

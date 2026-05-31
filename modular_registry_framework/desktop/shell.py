@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import tkinter as tk
 from tkinter import ttk
 
@@ -21,6 +22,7 @@ class DesktopShell:
 
     def _build_registered_screens(self) -> None:
         for screen in self.context.registry.list_screens():
+            logging.getLogger(__name__).debug("Building screen: area=%s title=%s", screen.area, screen.title)
             frame = ttk.Frame(self.nav)
             widget = screen.factory(frame, self.context)
             if widget is not frame:
@@ -29,4 +31,3 @@ class DesktopShell:
 
     def run(self) -> None:
         self.root.mainloop()
-

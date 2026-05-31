@@ -1,4 +1,4 @@
-from modular_registry_framework.core.registry import Registry
+from modular_registry_framework.core.registry import ModuleMetadata, Registry
 
 
 def test_registry_orders_screens_by_area_order_and_title():
@@ -23,3 +23,39 @@ def test_registry_emits_event_to_registered_handlers():
 
     assert seen == [7]
 
+
+def test_registry_tracks_module_metadata():
+    registry = Registry()
+
+    registry.add_module(
+        ModuleMetadata(
+            name="records",
+            title="Records",
+            description="Record management",
+            dependencies=("audit_log",),
+        )
+    )
+
+    assert registry.list_modules()["records"].dependencies == ("audit_log",)
+
+
+def test_registry_supports_wildcard_event_handlers():
+    registry = Registry()
+    seen = []
+
+    registry.on("*", lambda payload: seen.append(payload))
+
+    registry.emit("file.imported", {"path": "data.csv"})
+
+    assert seen == [{"event_name": "file.imported", "payload": {"path": "data.csv"}}]
+
+
+def test_registry_tracks_importers_and_report_sections():
+    registry = Registry()
+
+    registry.add_file_importer("csv", lambda path, context: [], label="CSV")
+    registry.add_report_section("summary", "Summary", lambda context: "Done", order=20)
+
+    assert ".csv" in registry.list_file_importers()
+    assert registry.get_file_importer(".csv").label == "CSV"
+    assert registry.list_report_sections()[0].name == "summary"

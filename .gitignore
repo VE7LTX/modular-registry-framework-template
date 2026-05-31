@@ -22,7 +22,9 @@ dist/
 
 # Local runtime data
 settings.json
+artifacts/
 data/
+logs/
 *.sqlite3
 *.db
 
