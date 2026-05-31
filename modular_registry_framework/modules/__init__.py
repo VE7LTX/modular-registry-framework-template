@@ -12,12 +12,17 @@ from .health_checks import module as health_checks
 from .help import module as help
 from .importers import module as importers
 from .jobs import module as jobs
+from .module_packs import module as module_packs
+from .module_test_harness import module as module_test_harness
 from .records import module as records
 from .reports import module as reports
+from .runbook_generator import module as runbook_generator
 from .runtime_trace import module as runtime_trace
+from .secret_scanner import module as secret_scanner
 from .settings_manager import module as settings_manager
 from .storage import module as storage
 from .template_generator import module as template_generator
+from .workspace_scanner import module as workspace_scanner
 
 MODULES = (
     audit_log,
@@ -39,6 +44,11 @@ MODULES = (
     flow_graph,
     graph_export,
     template_generator,
+    module_packs,
+    module_test_harness,
+    runbook_generator,
+    workspace_scanner,
+    secret_scanner,
     example,
 )
 

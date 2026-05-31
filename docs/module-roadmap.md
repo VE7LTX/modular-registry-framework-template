@@ -13,6 +13,8 @@ The first baseline for these modules now exists in the template. The next work i
 - `jobs`, `importers`, `artifact_library`, `reports`, and `exporters` can carry `trace_id`.
 - `audit_log` and `runtime_trace` persist to SQLite when storage is available.
 - `template_generator` creates starter folders for six app families.
+- `mrf` CLI exposes health, graph, template, scan, secrets, module-test, runbook, and packs commands.
+- `workspace_scanner`, `secret_scanner`, `module_test_harness`, `module_packs`, and `runbook_generator` now exist as baseline modules.
 
 ### api_clients
 

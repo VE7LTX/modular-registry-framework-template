@@ -255,6 +255,66 @@ Starter families:
 - `benchmark_evaluation`
 - `integration_control_panel`
 
+### module_packs
+
+Describes reusable sets of modules for each app family.
+
+Registers:
+
+- service: `module_packs`
+- command: `module_packs.render`
+- screen: `Tools / Module Packs`
+- inputs: template families
+- outputs: module packs
+
+### module_test_harness
+
+Generates baseline pytest files for module registration and traceability.
+
+Registers:
+
+- service: `module_test_harness`
+- commands: `module_test.render`, `module_test.write`
+- screen: `Tools / Module Test Harness`
+- inputs: module name
+- outputs: pytest file
+
+### runbook_generator
+
+Generates operational runbooks from registered modules, settings, health checks, and data locations.
+
+Registers:
+
+- service: `runbook_generator`
+- commands: `runbook.render`, `runbook.save`
+- screen: `Tools / Runbook`
+- inputs: registry metadata
+- outputs: runbook artifact
+
+### workspace_scanner
+
+Scans local workspace folders and summarizes project signals.
+
+Registers:
+
+- service: `workspace_scanner`
+- command: `workspace.scan`
+- screen: `Tools / Workspace Scanner`
+- inputs: workspace folder
+- outputs: project inventory
+
+### secret_scanner
+
+Scans project text files for likely hardcoded secrets and redacts values.
+
+Registers:
+
+- service: `secret_scanner`
+- command: `secrets.scan`
+- screen: `Tools / Secret Scanner`
+- inputs: source files
+- outputs: redacted findings
+
 ### reports
 
 Renders Markdown reports from registered report sections.

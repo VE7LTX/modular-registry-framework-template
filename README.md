@@ -199,6 +199,11 @@ Use events for meaningful cross-module actions, not every small UI click.
 - `modular_registry_framework/modules/flow_graph/` - automatic Mermaid graph of modules, capabilities, events, inputs, outputs, and flows
 - `modular_registry_framework/modules/graph_export/` - Mermaid and JSON graph artifact snapshots
 - `modular_registry_framework/modules/template_generator/` - starter folders for common app families
+- `modular_registry_framework/modules/module_packs/` - reusable module sets for app families
+- `modular_registry_framework/modules/module_test_harness/` - generated pytest module smoke tests
+- `modular_registry_framework/modules/runbook_generator/` - operational runbooks from registry metadata
+- `modular_registry_framework/modules/workspace_scanner/` - local workspace project inventory
+- `modular_registry_framework/modules/secret_scanner/` - likely secret detection with redacted output
 - `modular_registry_framework/modules/example/` - minimal feature module
 - `modular_registry_framework/desktop/shell.py` - small Tkinter shell that builds navigation from registered screens
 - `modular_registry_framework/scaffold.py` - CLI for creating a new module folder
@@ -206,6 +211,7 @@ Use events for meaningful cross-module actions, not every small UI click.
 - `docs/development-workflow.md` - practical workflow notes
 - `docs/built-in-modules.md` - current built-in module inventory
 - `docs/module-roadmap.md` - next modules to build
+- `docs/cli.md` - command-line usage
 - `docs/module-lifecycle.md` - startup and registration flow
 - `docs/building-a-module.md` - module file responsibilities
 - `docs/events-and-hooks.md` - event naming and payload guidance
@@ -221,6 +227,22 @@ Use events for meaningful cross-module actions, not every small UI click.
 ```powershell
 cd modular-registry-framework
 python -m modular_registry_framework.main
+```
+
+## CLI
+
+The `mrf` command exposes framework tools without opening the desktop shell:
+
+```powershell
+mrf health
+mrf graph mermaid
+mrf graph export
+mrf template data_ingestion .\MyIngestionApp
+mrf scan "C:\VS Code Workspaces"
+mrf secrets .\MyProject
+mrf module-test inventory --tests-dir .\tests
+mrf runbook
+mrf packs
 ```
 
 ## Scaffold A Module

@@ -6,6 +6,7 @@ requires-python = ">=3.10"
 dependencies = []
 
 [project.scripts]
+mrf = "modular_registry_framework.cli:main"
 mrf-app = "modular_registry_framework.main:main"
 mrf-scaffold = "modular_registry_framework.scaffold:main"
 
