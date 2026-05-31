@@ -178,7 +178,7 @@ Use events for meaningful cross-module actions, not every small UI click.
 
 - `modular_registry_framework/core/registry.py` - capability registry
 - `modular_registry_framework/core/context.py` - shared runtime context
-- `modular_registry_framework/core/settings.py` - simple JSON-backed settings object
+- `modular_registry_framework/core/settings.py` - settings object with JSON, JSONL, XML, YAML, and YML load/save support
 - `modular_registry_framework/modules/example/` - minimal feature module
 - `modular_registry_framework/desktop/shell.py` - small Tkinter shell that builds navigation from registered screens
 - `modular_registry_framework/scaffold.py` - CLI for creating a new module folder
@@ -222,6 +222,17 @@ from .inventory import module as inventory
 MODULES = (example, inventory)
 ```
 
+## Settings Formats
+
+Settings load and save based on the file extension:
+
+- `.json` - normal JSON object
+- `.jsonl` - one setting per line as `{"key": "app.name", "value": "Template App"}`
+- `.xml` - `<settings>` root with `<setting key="...">...</setting>` entries
+- `.yaml` / `.yml` - flat key/value mapping with JSON-compatible values
+
+JSON remains the default format used by the example app.
+
 ## Development Rules
 
 - Core coordinates; modules own features.
@@ -251,4 +262,3 @@ The architecture is working when:
 - future projects can reuse the same skeleton
 
 If the framework makes small apps harder, it is too heavy. Keep it practical.
-
