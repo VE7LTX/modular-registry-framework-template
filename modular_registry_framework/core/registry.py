@@ -10,6 +10,8 @@ ScreenFactory = Callable[[Any, Any], Any]
 CommandHandler = Callable[..., Any]
 ImporterHandler = Callable[..., Any]
 ReportRenderer = Callable[[Any], str]
+HealthCheckHandler = Callable[[Any], Any]
+ExporterHandler = Callable[..., str | bytes]
 
 
 @dataclass(frozen=True, slots=True)
@@ -70,6 +72,31 @@ class FlowRegistration:
     kind: str = "data"
 
 
+@dataclass(frozen=True, slots=True)
+class HealthCheckRegistration:
+    name: str
+    title: str
+    handler: HealthCheckHandler
+    module: str = "system"
+
+
+@dataclass(frozen=True, slots=True)
+class ExporterRegistration:
+    format_name: str
+    extension: str
+    handler: ExporterHandler
+    label: str
+    description: str = ""
+
+
+@dataclass(frozen=True, slots=True)
+class ApiClientRegistration:
+    name: str
+    label: str
+    client: Any
+    description: str = ""
+
+
 class Registry:
     """Directory of capabilities contributed by app modules.
 
@@ -89,6 +116,9 @@ class Registry:
         self._report_sections: list[ReportSectionRegistration] = []
         self._data_ports: list[DataPortRegistration] = []
         self._flows: list[FlowRegistration] = []
+        self._health_checks: dict[str, HealthCheckRegistration] = {}
+        self._exporters: dict[str, ExporterRegistration] = {}
+        self._api_clients: dict[str, ApiClientRegistration] = {}
         self._event_handlers: dict[str, list[EventHandler]] = defaultdict(list)
 
     def add_module(self, metadata: ModuleMetadata) -> None:
@@ -240,6 +270,69 @@ class Registry:
 
     def list_flows(self) -> list[FlowRegistration]:
         return sorted(self._flows, key=lambda flow: (flow.kind, flow.source, flow.target, flow.label))
+
+    def add_health_check(
+        self,
+        name: str,
+        title: str,
+        handler: HealthCheckHandler,
+        module: str = "system",
+    ) -> None:
+        if name in self._health_checks:
+            raise ValueError(f"Health check is already registered: {name}")
+        self._health_checks[name] = HealthCheckRegistration(name, title, handler, module)
+        logging.getLogger(__name__).debug("Registered health check: %s module=%s", name, module)
+
+    def list_health_checks(self) -> dict[str, HealthCheckRegistration]:
+        return dict(sorted(self._health_checks.items()))
+
+    def add_exporter(
+        self,
+        format_name: str,
+        extension: str,
+        handler: ExporterHandler,
+        label: str | None = None,
+        description: str = "",
+    ) -> None:
+        clean_format = format_name.strip().lower()
+        if not clean_format:
+            raise ValueError("Exporter format name cannot be empty.")
+        if clean_format in self._exporters:
+            raise ValueError(f"Exporter is already registered: {clean_format}")
+        clean_extension = _normalize_extension(extension)
+        self._exporters[clean_format] = ExporterRegistration(
+            clean_format,
+            clean_extension,
+            handler,
+            label or clean_format.upper(),
+            description,
+        )
+        logging.getLogger(__name__).debug("Registered exporter: %s extension=%s", clean_format, clean_extension)
+
+    def get_exporter(self, format_name: str) -> ExporterRegistration:
+        clean_format = format_name.strip().lower()
+        try:
+            return self._exporters[clean_format]
+        except KeyError as exc:
+            raise KeyError(f"Unknown exporter: {clean_format}") from exc
+
+    def list_exporters(self) -> dict[str, ExporterRegistration]:
+        return dict(sorted(self._exporters.items()))
+
+    def add_api_client(self, name: str, label: str, client: Any, description: str = "") -> None:
+        if name in self._api_clients:
+            raise ValueError(f"API client is already registered: {name}")
+        self._api_clients[name] = ApiClientRegistration(name, label, client, description)
+        logging.getLogger(__name__).debug("Registered API client: %s label=%s", name, label)
+
+    def get_api_client(self, name: str) -> ApiClientRegistration:
+        try:
+            return self._api_clients[name]
+        except KeyError as exc:
+            raise KeyError(f"Unknown API client: {name}") from exc
+
+    def list_api_clients(self) -> dict[str, ApiClientRegistration]:
+        return dict(sorted(self._api_clients.items()))
 
     def on(self, event_name: str, handler: EventHandler) -> None:
         self._event_handlers[event_name].append(handler)

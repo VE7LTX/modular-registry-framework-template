@@ -4,11 +4,21 @@ This is the next build queue for turning the template into a broad reusable app 
 
 ## Highest Priority
 
+The first baseline for these modules now exists in the template. The next work is to deepen them from generic skeletons into production-ready foundations.
+
 ### api_clients
 
 Shared pattern for external APIs.
 
-Should provide:
+Baseline shipped:
+
+- client registration
+- example local client
+- status checks
+- health check contribution
+- graph trace ports
+
+Next depth:
 
 - auth status checks
 - retry and backoff policy
@@ -23,7 +33,14 @@ Useful for Oanda, Kraken, HubSpot, Amazon PAAPI, Personal AI, OpenClaw, REW API,
 
 Generic list/detail/edit workflow foundation.
 
-Should provide:
+Baseline shipped:
+
+- generic in-memory record model
+- create/list/archive service
+- record events
+- graph trace ports
+
+Next depth:
 
 - record model pattern
 - list/filter/sort service helpers
@@ -37,7 +54,15 @@ Useful for inventory, case records, DUT records, benchmark runs, customers, tran
 
 SQLite and local persistence helpers.
 
-Should provide:
+Baseline shipped:
+
+- SQLite connection lifecycle
+- initialization
+- backup
+- health check
+- storage report section
+
+Next depth:
 
 - database connection lifecycle
 - repository base classes
@@ -52,7 +77,15 @@ Useful for ChronoBrief, Moruca REW, Budget, Oanda, PPAS, bandplanx, and CBIG.
 
 Environment and secret validation without leaking values.
 
-Should provide:
+Baseline shipped:
+
+- `.env` loading
+- required variable declarations
+- redacted diagnostics
+- health check
+- `.env.example` content generation
+
+Next depth:
 
 - `.env` loading pattern
 - required variable declarations
@@ -81,7 +114,13 @@ Should provide:
 
 Registry for output formats.
 
-Should support:
+Baseline shipped:
+
+- exporter registry contribution point
+- JSON, JSONL, text, Markdown, CSV, XML, YAML, and YML serializers
+- export events
+
+Next depth:
 
 - Markdown
 - HTML
@@ -96,7 +135,13 @@ Should support:
 
 Persist graph outputs.
 
-Should provide:
+Baseline shipped:
+
+- Mermaid artifact output
+- JSON graph output
+- graph export report section
+
+Next depth:
 
 - Mermaid artifact output
 - JSON graph output
@@ -108,7 +153,13 @@ Should provide:
 
 Trace IDs across jobs, imports, artifacts, reports, logs, and events.
 
-Should provide:
+Baseline shipped:
+
+- generated trace IDs
+- wildcard event capture when payload has `trace_id`
+- trace report section
+
+Next depth:
 
 - generated trace IDs
 - parent/child trace relationships
@@ -119,7 +170,14 @@ Should provide:
 
 Readiness and configuration warnings.
 
-Should provide:
+Baseline shipped:
+
+- health check registry contribution point
+- pass/warn/fail result model
+- readiness screen
+- health event
+
+Next depth:
 
 - module readiness checks
 - file path checks
@@ -147,4 +205,3 @@ Each starter should declare:
 - example flow graph
 - run/test commands
 - app-specific README section
-

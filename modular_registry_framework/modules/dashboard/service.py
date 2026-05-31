@@ -16,6 +16,9 @@ class DashboardService:
             "settings": registry.list_settings(),
             "commands": registry.list_commands(),
             "importers": registry.list_file_importers(),
+            "exporters": registry.list_exporters(),
+            "api_clients": registry.list_api_clients(),
+            "health_checks": registry.list_health_checks(),
             "report_sections": registry.list_report_sections(),
             "event_handlers": registry.list_event_handlers(),
         }
@@ -28,7 +31,9 @@ class DashboardService:
             lines.append(f"- {metadata.title} ({metadata.name}): {metadata.description}")
         lines.extend(["", "Services: " + ", ".join(sorted(snapshot["services"]))])
         lines.append("Importers: " + ", ".join(sorted(snapshot["importers"])))
+        lines.append("Exporters: " + ", ".join(sorted(snapshot["exporters"])))
+        lines.append("API clients: " + ", ".join(sorted(snapshot["api_clients"])))
+        lines.append("Health checks: " + ", ".join(sorted(snapshot["health_checks"])))
         lines.append("Report sections: " + ", ".join(section.name for section in snapshot["report_sections"]))
         lines.append("Event handlers: " + str(snapshot["event_handlers"]))
         return "\n".join(lines)
-

@@ -77,6 +77,72 @@ Registers:
 - inputs: registry capabilities
 - outputs: Mermaid graph
 
+### graph_export
+
+Persists flow graph snapshots as Mermaid and JSON artifacts.
+
+Registers:
+
+- service: `graph_export`
+- commands: `graph_export.save_mermaid`, `graph_export.save_json`
+- report section: `system.graph_export`
+- screen: `System / Graph Export`
+- inputs: flow graph
+- outputs: graph artifacts
+
+### health_checks
+
+Runs readiness checks contributed by modules.
+
+Registers:
+
+- service: `health_checks`
+- health checks: `modules.registered`, `trace.ports`
+- screen: `System / Health`
+- inputs: registered checks
+- outputs: health results
+
+### env_secrets
+
+Loads `.env`, validates required variables, and redacts secret diagnostics.
+
+Registers:
+
+- service: `env_secrets`
+- command: `env_secrets.generate_example`
+- health check: `env_secrets.required`
+- screen: `System / Secrets`
+- inputs: `.env file`
+- outputs: redacted secret status
+
+### runtime_trace
+
+Collects events that carry `trace_id`.
+
+Registers:
+
+- service: `runtime_trace`
+- command: `runtime_trace.new_trace_id`
+- report section: `runtime_trace.events`
+- wildcard handler: `*`
+- screen: `System / Runtime Trace`
+- inputs: trace events
+- outputs: trace report
+
+### storage
+
+Provides SQLite lifecycle, initialization, health check, and backup baseline.
+
+Registers:
+
+- service: `storage`
+- commands: `storage.initialize`, `storage.backup`
+- health check: `storage.sqlite`
+- report section: `storage.sqlite`
+- screen: `System / Storage`
+- inputs: database path
+- outputs: SQLite database
+
 ## Work Modules
 
 ### artifact_library
@@ -116,6 +182,44 @@ Registers:
 - outputs: import results
 - events: `file.imported`
 
+### exporters
+
+Provides reusable output serializers.
+
+Registers:
+
+- service: `exporters`
+- screen: `Tools / Exporters`
+- exporters: `json`, `jsonl`, `txt`, `md`, `csv`, `xml`, `yaml`, `yml`
+- inputs: structured data
+- outputs: export text
+- events: `data.exported`
+
+### records
+
+Provides a generic in-memory record pattern.
+
+Registers:
+
+- service: `records`
+- screen: `Tools / Records`
+- inputs: record values
+- outputs: record events
+- events: `record.created`, `record.archived`
+
+### api_clients
+
+Registers external API clients and exposes availability checks.
+
+Registers:
+
+- service: `api_clients`
+- API client: `example`
+- health check: `api_clients.available`
+- screen: `Integrations / API Clients`
+- inputs: requests
+- outputs: responses
+
 ### reports
 
 Renders Markdown reports from registered report sections.
@@ -142,4 +246,3 @@ Registers:
 - inputs: item name
 - outputs: example items
 - events: `example.item_created`
-

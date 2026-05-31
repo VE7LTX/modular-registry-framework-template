@@ -1,8 +1,11 @@
 from .context import AppContext
 from .logging_config import configure_logging
 from .registry import (
+    ApiClientRegistration,
     DataPortRegistration,
+    ExporterRegistration,
     FlowRegistration,
+    HealthCheckRegistration,
     ImporterRegistration,
     ModuleMetadata,
     Registry,
@@ -14,8 +17,11 @@ from .settings import Settings
 
 __all__ = [
     "AppContext",
+    "ApiClientRegistration",
     "DataPortRegistration",
+    "ExporterRegistration",
     "FlowRegistration",
+    "HealthCheckRegistration",
     "ImporterRegistration",
     "ModuleMetadata",
     "Registry",

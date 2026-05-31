@@ -21,6 +21,9 @@ dist/
 *.egg-info/
 
 # Local runtime data
+.env
+.env.*
+!.env.example
 settings.json
 artifacts/
 data/

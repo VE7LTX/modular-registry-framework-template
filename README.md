@@ -185,11 +185,19 @@ Use events for meaningful cross-module actions, not every small UI click.
 - `modular_registry_framework/modules/settings_manager/` - registered settings viewer and saver
 - `modular_registry_framework/modules/diagnostics/` - debug mode, logging level, handlers, and runtime inspection
 - `modular_registry_framework/modules/audit_log/` - recent event history
+- `modular_registry_framework/modules/health_checks/` - app readiness checks
+- `modular_registry_framework/modules/env_secrets/` - `.env` loading, required secrets, and redacted diagnostics
+- `modular_registry_framework/modules/storage/` - SQLite lifecycle, health check, and backup baseline
+- `modular_registry_framework/modules/records/` - generic record create/list/archive pattern
+- `modular_registry_framework/modules/api_clients/` - API client registration and availability checks
+- `modular_registry_framework/modules/runtime_trace/` - trace IDs across runtime events
 - `modular_registry_framework/modules/artifact_library/` - generated file and export tracking
 - `modular_registry_framework/modules/jobs/` - common job lifecycle for imports, scans, reports, and syncs
 - `modular_registry_framework/modules/importers/` - CSV, JSON, JSONL, XML, Markdown/text, YAML, and YML import surface
+- `modular_registry_framework/modules/exporters/` - Markdown/text, CSV, JSON, JSONL, XML, YAML, and YML export surface
 - `modular_registry_framework/modules/reports/` - Markdown report generation from registered sections
 - `modular_registry_framework/modules/flow_graph/` - automatic Mermaid graph of modules, capabilities, events, inputs, outputs, and flows
+- `modular_registry_framework/modules/graph_export/` - Mermaid and JSON graph artifact snapshots
 - `modular_registry_framework/modules/example/` - minimal feature module
 - `modular_registry_framework/desktop/shell.py` - small Tkinter shell that builds navigation from registered screens
 - `modular_registry_framework/scaffold.py` - CLI for creating a new module folder

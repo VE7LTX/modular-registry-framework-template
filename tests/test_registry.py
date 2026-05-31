@@ -71,3 +71,15 @@ def test_registry_tracks_data_ports_and_flows():
     assert registry.list_data_ports()[0].direction == "input"
     assert registry.list_data_ports()[1].direction == "output"
     assert registry.list_flows()[0].label == "parse"
+
+
+def test_registry_tracks_health_checks_exporters_and_api_clients():
+    registry = Registry()
+
+    registry.add_health_check("ready", "Ready", lambda context: {"status": "pass"})
+    registry.add_exporter("json", ".json", lambda data: "{}", "JSON")
+    registry.add_api_client("example", "Example", object())
+
+    assert "ready" in registry.list_health_checks()
+    assert registry.get_exporter("json").extension == ".json"
+    assert registry.get_api_client("example").label == "Example"

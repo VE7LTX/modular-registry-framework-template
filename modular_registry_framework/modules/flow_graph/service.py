@@ -55,6 +55,23 @@ class FlowGraphService:
             nodes.setdefault(_node_id("event:file.imported"), GraphNode(_node_id("event:file.imported"), "file.imported", "event"))
             edges.add(GraphEdge(importer_id, _node_id("event:file.imported"), "emits", "event"))
 
+        for format_name, exporter in registry.list_exporters().items():
+            exporter_id = _node_id(f"exporter:{format_name}")
+            nodes[exporter_id] = GraphNode(exporter_id, f"{format_name} {exporter.extension}", "exporter")
+            nodes.setdefault(_node_id("event:data.exported"), GraphNode(_node_id("event:data.exported"), "data.exported", "event"))
+            edges.add(GraphEdge(exporter_id, _node_id("event:data.exported"), "emits", "event"))
+
+        for name, api_client in registry.list_api_clients().items():
+            api_id = _node_id(f"api_client:{name}")
+            nodes[api_id] = GraphNode(api_id, api_client.label, "api_client")
+
+        for name, health_check in registry.list_health_checks().items():
+            check_id = _node_id(f"health_check:{name}")
+            nodes[check_id] = GraphNode(check_id, health_check.title, "health_check")
+            module_id = _node_id(f"module:{health_check.module}")
+            nodes.setdefault(module_id, GraphNode(module_id, health_check.module, "module"))
+            edges.add(GraphEdge(module_id, check_id, "checks", "health"))
+
         for section in registry.list_report_sections():
             section_id = _node_id(f"report_section:{section.name}")
             nodes[section_id] = GraphNode(section_id, section.title, "report_section")

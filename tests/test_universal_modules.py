@@ -18,6 +18,14 @@ def test_context_registers_universal_modules(tmp_path: Path):
     assert "reports" in modules
     assert "help" in modules
     assert "flow_graph" in modules
+    assert "health_checks" in modules
+    assert "env_secrets" in modules
+    assert "storage" in modules
+    assert "records" in modules
+    assert "api_clients" in modules
+    assert "runtime_trace" in modules
+    assert "exporters" in modules
+    assert "graph_export" in modules
 
 
 def test_audit_log_records_registry_events(tmp_path: Path):
@@ -137,3 +145,85 @@ def test_settings_manager_saves_current_settings(tmp_path: Path):
 
     assert output_path.exists()
     assert "debug.enabled: true" in output_path.read_text(encoding="utf-8")
+
+
+def test_health_checks_run_registered_checks(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    health_checks = context.registry.get_service("health_checks")
+
+    summary = health_checks.summary()
+
+    assert summary["pass"] >= 1
+
+
+def test_env_secrets_validate_and_redact(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    env_secrets = context.registry.get_service("env_secrets")
+    env_secrets.require("MRF_TEST_SECRET", "Test Secret")
+    (tmp_path / ".env").write_text("MRF_TEST_SECRET=abcdef\n", encoding="utf-8")
+
+    rows = env_secrets.validate()
+
+    assert rows[0]["present"] is True
+    assert rows[0]["redacted"] == "ab****ef"
+
+
+def test_storage_initializes_and_backs_up_sqlite(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    storage = context.registry.get_service("storage")
+
+    storage.initialize()
+    backup = storage.backup()
+
+    assert storage.path.exists()
+    assert backup.exists()
+
+
+def test_records_create_and_archive_records(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    records = context.registry.get_service("records")
+
+    record = records.create("case", {"name": "Alpha"})
+    archived = records.archive(record.id)
+
+    assert archived.archived is True
+    assert records.list_records("case", include_archived=True)[0].values["name"] == "Alpha"
+
+
+def test_api_clients_report_example_status(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    api_clients = context.registry.get_service("api_clients")
+
+    statuses = api_clients.status_all()
+
+    assert statuses[0].available is True
+
+
+def test_runtime_trace_collects_events_with_trace_id(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    runtime_trace = context.registry.get_service("runtime_trace")
+    trace_id = runtime_trace.new_trace_id()
+
+    context.registry.emit("example.traced", {"trace_id": trace_id, "value": 1})
+
+    assert runtime_trace.list_events(trace_id)[0].event_name == "example.traced"
+
+
+def test_exporters_serialize_formats(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    exporters = context.registry.get_service("exporters")
+
+    assert '"name": "Alpha"' in exporters.export("json", {"name": "Alpha"})
+    assert "name" in exporters.export("csv", [{"name": "Alpha"}])
+    assert "name:" in exporters.export("yaml", {"name": "Alpha"})
+
+
+def test_graph_export_saves_mermaid_and_json(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    graph_export = context.registry.get_service("graph_export")
+
+    mermaid = graph_export.save_mermaid()
+    graph_json = graph_export.save_json()
+
+    assert mermaid.path.exists()
+    assert graph_json.path.exists()
