@@ -71,7 +71,12 @@ class FlowRegistration:
 
 
 class Registry:
-    """Directory of capabilities contributed by app modules."""
+    """Directory of capabilities contributed by app modules.
+
+    The registry is intentionally descriptive as well as operational. Modules use
+    it to register runtime objects, and the dashboard/flow graph use it to explain
+    how the application is assembled.
+    """
 
     def __init__(self) -> None:
         self._modules: dict[str, ModuleMetadata] = {}
@@ -208,9 +213,11 @@ class Registry:
         return sorted(self._report_sections, key=lambda section: (section.order, section.title))
 
     def add_data_input(self, module: str, name: str, kind: str, description: str = "") -> None:
+        """Declare an input a module consumes so the flow graph can trace it."""
         self._add_data_port(module, name, "input", kind, description)
 
     def add_data_output(self, module: str, name: str, kind: str, description: str = "") -> None:
+        """Declare an output a module produces so the flow graph can trace it."""
         self._add_data_port(module, name, "output", kind, description)
 
     def _add_data_port(self, module: str, name: str, direction: str, kind: str, description: str = "") -> None:
@@ -224,6 +231,7 @@ class Registry:
         return sorted(self._data_ports, key=lambda port: (port.module, port.direction, port.name))
 
     def add_flow(self, source: str, target: str, label: str, kind: str = "data") -> None:
+        """Declare a directed relationship between two graph endpoints."""
         flow = FlowRegistration(source, target, label, kind)
         if flow in self._flows:
             raise ValueError(f"Flow is already registered: {source} -> {target} ({label})")

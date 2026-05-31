@@ -195,6 +195,8 @@ Use events for meaningful cross-module actions, not every small UI click.
 - `modular_registry_framework/scaffold.py` - CLI for creating a new module folder
 - `docs/architecture.md` - full architecture note
 - `docs/development-workflow.md` - practical workflow notes
+- `docs/built-in-modules.md` - current built-in module inventory
+- `docs/module-roadmap.md` - next modules to build
 - `docs/module-lifecycle.md` - startup and registration flow
 - `docs/building-a-module.md` - module file responsibilities
 - `docs/events-and-hooks.md` - event naming and payload guidance

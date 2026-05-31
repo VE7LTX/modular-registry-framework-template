@@ -106,6 +106,8 @@ The core does not know every detail of every feature. Modules register what they
 
 A minimum implementation needs these pieces.
 
+The current template has grown past the minimum implementation. It now includes built-in modules for dashboarding, help, settings, diagnostics, audit logging, artifacts, jobs, importers, reports, and automatic flow graph tracing. See `docs/built-in-modules.md` for the current inventory.
+
 ### 1. App Core
 
 The app core starts and coordinates the application.
@@ -145,6 +147,9 @@ registry.add_file_importer(extension, importer)
 registry.add_report_section(name, renderer)
 registry.add_comparison_metric(name, calculator)
 registry.add_command(name, handler)
+registry.add_data_input(module, name, kind, description)
+registry.add_data_output(module, name, kind, description)
+registry.add_flow(source, target, label, kind)
 ```
 
 The registry is a directory of capabilities. It should not contain business logic.
@@ -486,8 +491,15 @@ Once the base pattern is working, future additions could include:
 - dynamic plugin discovery through Python entry points
 - `pluggy` integration for a more formal hook system
 - module templates/scaffolding command
+- API client module with auth/retry/redaction support
+- records module for list/detail/edit workflows
+- SQLite storage and migration helpers
+- runtime trace IDs across jobs/imports/artifacts/reports/events
+- graph exports to Mermaid, JSON, and Graphviz
 
 Add these only when real projects need them.
+
+See `docs/module-roadmap.md` for the current build queue.
 
 ## Success Criteria
 

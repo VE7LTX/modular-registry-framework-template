@@ -8,6 +8,8 @@ from .models import FlowGraph, GraphEdge, GraphNode
 
 
 class FlowGraphService:
+    """Build an inspectable graph from registry declarations and inferred links."""
+
     def __init__(self, context: AppContext) -> None:
         self.context = context
 
@@ -117,4 +119,3 @@ def _infer_module_from_title(title: str, modules: dict) -> str | None:
         if module_name in clean_title or clean_title in module_name:
             return module_name
     return None
-

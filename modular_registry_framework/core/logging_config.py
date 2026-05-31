@@ -9,6 +9,7 @@ DEFAULT_LOG_FORMAT = "%(asctime)s %(levelname)s %(name)s: %(message)s"
 
 
 def configure_logging(settings: Settings, base_dir: Path) -> None:
+    """Apply app-wide logging from settings through the Python root logger."""
     debug_enabled = bool(settings.get("debug.enabled", False))
     level_name = str(settings.get("logging.level", "DEBUG" if debug_enabled else "INFO")).upper()
     level = getattr(logging, level_name, logging.INFO)
@@ -43,4 +44,3 @@ def configure_logging(settings: Settings, base_dir: Path) -> None:
         console_enabled,
         str(log_file) if file_enabled else None,
     )
-
