@@ -145,3 +145,32 @@ def test_cli_repair_apply_writes_baseline(tmp_path: Path, monkeypatch, capsys):
 
     assert (target / ".gitignore").exists()
     assert "Wrote" in capsys.readouterr().out
+
+
+def test_cli_profiles_workflows_ui_trace_and_recipes(tmp_path: Path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+
+    assert cli_main(["profiles", "tui_tool"]) == 0
+    assert "TUI Tool" in capsys.readouterr().out
+
+    assert cli_main(["workflows", "import_report_export", "--mermaid"]) == 0
+    assert "flowchart LR" in capsys.readouterr().out
+
+    assert cli_main(["ui"]) == 0
+    assert "UI Adapter Coverage" in capsys.readouterr().out
+
+    assert cli_main(["trace-graph"]) == 0
+    assert "No traced runtime events" in capsys.readouterr().out
+
+    assert cli_main(["recipes"]) == 0
+    assert "csv_report" in capsys.readouterr().out
+
+
+def test_cli_recipe_run_creates_artifact(tmp_path: Path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+
+    assert cli_main(["recipes", "csv_report", "--run"]) == 0
+
+    output = capsys.readouterr().out
+    assert "csv_report" in output
+    assert any((tmp_path / "artifacts" / "recipes").glob("csv_report-*.md"))

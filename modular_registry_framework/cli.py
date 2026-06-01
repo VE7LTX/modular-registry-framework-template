@@ -57,6 +57,24 @@ def build_parser() -> argparse.ArgumentParser:
     repair_parser = subparsers.add_parser("repair", help="Plan or apply baseline project repair.")
     repair_parser.add_argument("action", choices=("plan", "apply"))
     repair_parser.add_argument("path", type=Path)
+
+    workflows_parser = subparsers.add_parser("workflows", help="Render or demo workflow pipelines.")
+    workflows_parser.add_argument("name", nargs="?")
+    workflows_parser.add_argument("--mermaid", action="store_true")
+    workflows_parser.add_argument("--demo", action="store_true")
+
+    profiles_parser = subparsers.add_parser("profiles", help="Render app profiles.")
+    profiles_parser.add_argument("name", nargs="?")
+
+    subparsers.add_parser("ui", help="Render UI surface coverage.")
+
+    trace_graph_parser = subparsers.add_parser("trace-graph", help="Render runtime trace graph.")
+    trace_graph_parser.add_argument("trace_id", nargs="?")
+    trace_graph_parser.add_argument("--mermaid", action="store_true")
+
+    recipes_parser = subparsers.add_parser("recipes", help="List or run recipes.")
+    recipes_parser.add_argument("name", nargs="?")
+    recipes_parser.add_argument("--run", action="store_true")
     return parser
 
 
@@ -161,6 +179,41 @@ def main(argv: list[str] | None = None) -> int:
         else:
             for path in service.apply_baseline(args.path):
                 print(f"Wrote {path}")
+        return 0
+
+    if args.command == "workflows":
+        service = context.registry.get_service("workflows")
+        name = args.name or "import_report_export"
+        if args.demo:
+            print(service.run_demo(name))
+        elif args.mermaid:
+            print(service.render_mermaid(name))
+        else:
+            print(service.render(args.name))
+        return 0
+
+    if args.command == "profiles":
+        print(context.registry.get_service("app_profiles").render(args.name))
+        return 0
+
+    if args.command == "ui":
+        print(context.registry.get_service("ui_adapters").render_text())
+        return 0
+
+    if args.command == "trace-graph":
+        service = context.registry.get_service("trace_graph")
+        if args.mermaid:
+            print(service.render_mermaid(args.trace_id))
+        else:
+            print(service.render_text(args.trace_id))
+        return 0
+
+    if args.command == "recipes":
+        service = context.registry.get_service("recipes")
+        if args.run:
+            print(service.run(args.name or "csv_report"))
+        else:
+            print(service.render())
         return 0
 
     raise ValueError(f"Unknown command: {args.command}")

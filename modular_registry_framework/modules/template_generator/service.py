@@ -58,6 +58,27 @@ APP_TEMPLATES = {
         ("api_clients", "env_secrets", "health_checks", "jobs", "diagnostics", "audit_log", "reports"),
         ("configs", "logs", "artifacts/api", "artifacts/reports", "tests"),
     ),
+    "cli_tool": AppTemplate(
+        "cli_tool",
+        "CLI Tool",
+        "Automation-first command utility with settings, scans, project repair, recipes, and tests.",
+        ("command_palette", "settings_editor", "project_repair", "workspace_scanner", "secret_scanner", "recipes"),
+        ("configs", "scripts", "artifacts/reports", "docs", "tests"),
+    ),
+    "tui_tool": AppTemplate(
+        "tui_tool",
+        "TUI Tool",
+        "Terminal-first app with dashboard rendering, command search, logs, artifacts, and workflows.",
+        ("tui_shell", "view_models", "command_palette", "health_checks", "log_viewer", "artifact_browser", "workflows"),
+        ("configs", "logs", "artifacts/reports", "artifacts/exports", "tests"),
+    ),
+    "tkinter_tool": AppTemplate(
+        "tkinter_tool",
+        "Tkinter Tool",
+        "Local desktop shell with reusable screens, settings, jobs, reports, and artifact browsing.",
+        ("dashboard", "ui_adapters", "view_models", "settings_editor", "jobs", "reports", "artifact_browser"),
+        ("data", "logs", "artifacts/reports", "artifacts/exports", "docs", "tests"),
+    ),
 }
 
 

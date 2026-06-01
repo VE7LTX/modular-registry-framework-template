@@ -16,6 +16,7 @@ The first baseline for these modules now exists in the template. The next work i
 - `mrf` CLI exposes health, graph, template, scan, secrets, module-test, runbook, and packs commands.
 - `workspace_scanner`, `secret_scanner`, `module_test_harness`, `module_packs`, and `runbook_generator` now exist as baseline modules.
 - `view_models`, `command_palette`, `tui_shell`, `settings_editor`, `log_viewer`, `artifact_browser`, and `project_repair` now exist as baseline modules.
+- `ui_adapters`, `workflows`, `app_profiles`, `trace_graph`, and `recipes` now exist as the app-surface and pipeline layer.
 
 ## UI Surface Direction
 
@@ -32,6 +33,25 @@ Next depth:
 - live job/log refresh
 - reusable list/detail widgets for Tkinter and TUI
 - background job queue with cancellation
+- one declaration format that can generate CLI arguments, TUI forms, and Tkinter forms
+
+## App Surface And Pipeline Layer
+
+Baseline shipped:
+
+- `ui_adapters` maps modules to CLI, screen, report, and dashboard surfaces.
+- `workflows` defines reusable cross-module pipelines and demo runs.
+- `app_profiles` recommends module bundles for CLI, TUI, Tkinter, data/API, and agent tools.
+- `trace_graph` renders actual runtime events as text or Mermaid.
+- `recipes` runs tiny examples that create artifacts and trace history.
+
+Next depth:
+
+- workflow input schemas and parameter prompts
+- workflow failure policies and rollback hooks
+- recipe fixtures for CSV, API payloads, prompts, and benchmark results
+- profile-aware template generation with importable packages
+- trace graph parent/child spans and artifact lineage
 
 ### api_clients
 
@@ -227,6 +247,9 @@ Starter folder generation now exists for:
 - `ai_agent_tool`
 - `benchmark_evaluation`
 - `integration_control_panel`
+- `cli_tool`
+- `tui_tool`
+- `tkinter_tool`
 
 Each starter should declare:
 

@@ -25,8 +25,13 @@ def test_context_registers_universal_modules(tmp_path: Path):
     assert "records" in modules
     assert "api_clients" in modules
     assert "runtime_trace" in modules
+    assert "trace_graph" in modules
     assert "exporters" in modules
     assert "graph_export" in modules
+    assert "workflows" in modules
+    assert "recipes" in modules
+    assert "ui_adapters" in modules
+    assert "app_profiles" in modules
 
 
 def test_audit_log_records_registry_events(tmp_path: Path):
@@ -291,3 +296,37 @@ def test_template_generator_creates_starter_files(tmp_path: Path):
     assert (target / "README.md").exists()
     assert (target / "settings.json").exists()
     assert (target / "modules.txt").read_text(encoding="utf-8").splitlines()[0] == "storage"
+
+
+def test_profiles_workflows_recipes_and_trace_graph(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    profiles = context.registry.get_service("app_profiles")
+    workflows = context.registry.get_service("workflows")
+    recipes = context.registry.get_service("recipes")
+    trace_graph = context.registry.get_service("trace_graph")
+    ui_adapters = context.registry.get_service("ui_adapters")
+
+    assert "tui_shell" in profiles.modules_for("tui_tool")
+    assert "`importers` import" in workflows.render("import_report_export")
+    assert "flowchart LR" in workflows.render_mermaid("import_report_export")
+
+    trace_id = workflows.run_demo("import_report_export")
+    assert trace_id in trace_graph.render_text(trace_id)
+    assert "workflow.completed" in trace_graph.render_mermaid(trace_id)
+
+    artifact_path = recipes.run("csv_report")
+    assert Path(artifact_path).exists()
+    assert ui_adapters.coverage_summary()["modules"] >= 1
+
+
+def test_template_generator_creates_cli_tui_and_tkinter_starters(tmp_path: Path):
+    context = build_context(base_dir=tmp_path)
+    generator = context.registry.get_service("template_generator")
+
+    cli_target = generator.create_app("cli_tool", tmp_path / "cli")
+    tui_target = generator.create_app("tui_tool", tmp_path / "tui")
+    tk_target = generator.create_app("tkinter_tool", tmp_path / "tk")
+
+    assert "command_palette" in (cli_target / "modules.txt").read_text(encoding="utf-8")
+    assert "tui_shell" in (tui_target / "modules.txt").read_text(encoding="utf-8")
+    assert "ui_adapters" in (tk_target / "modules.txt").read_text(encoding="utf-8")

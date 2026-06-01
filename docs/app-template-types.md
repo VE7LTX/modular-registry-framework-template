@@ -92,3 +92,47 @@ Use:
 - jobs
 - reports
 - template generator starter: `integration_control_panel`
+
+## CLI Tool
+
+Fits: one-shot utilities, project cleanup tools, import/export helpers, and scripted workspace automation.
+
+Use:
+
+- command palette
+- settings editor
+- project repair
+- workspace scanner
+- secret scanner
+- recipes
+- template generator starter: `cli_tool`
+
+## TUI Tool
+
+Fits: terminal-first dashboards, SSH-friendly utilities, and repeatable operator workflows.
+
+Use:
+
+- TUI shell
+- view models
+- command palette
+- health checks
+- log viewer
+- artifact browser
+- workflows
+- template generator starter: `tui_tool`
+
+## Tkinter Tool
+
+Fits: local desktop tools that need richer operator screens but should keep business logic reusable.
+
+Use:
+
+- dashboard
+- UI adapters
+- view models
+- settings editor
+- jobs
+- reports
+- artifact browser
+- template generator starter: `tkinter_tool`

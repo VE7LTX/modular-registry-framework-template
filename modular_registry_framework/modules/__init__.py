@@ -1,4 +1,5 @@
 from .api_clients import module as api_clients
+from .app_profiles import module as app_profiles
 from .artifact_browser import module as artifact_browser
 from .artifact_library import module as artifact_library
 from .audit_log import module as audit_log
@@ -18,6 +19,7 @@ from .log_viewer import module as log_viewer
 from .module_packs import module as module_packs
 from .module_test_harness import module as module_test_harness
 from .project_repair import module as project_repair
+from .recipes import module as recipes
 from .records import module as records
 from .reports import module as reports
 from .runbook_generator import module as runbook_generator
@@ -27,13 +29,17 @@ from .settings_manager import module as settings_manager
 from .settings_editor import module as settings_editor
 from .storage import module as storage
 from .template_generator import module as template_generator
+from .trace_graph import module as trace_graph
+from .ui_adapters import module as ui_adapters
 from .workspace_scanner import module as workspace_scanner
 from .tui_shell import module as tui_shell
 from .view_models import module as view_models
+from .workflows import module as workflows
 
 MODULES = (
     audit_log,
     runtime_trace,
+    trace_graph,
     diagnostics,
     health_checks,
     env_secrets,
@@ -48,15 +54,19 @@ MODULES = (
     exporters,
     api_clients,
     reports,
+    workflows,
+    recipes,
     help,
     view_models,
     command_palette,
     tui_shell,
+    ui_adapters,
     dashboard,
     flow_graph,
     graph_export,
     template_generator,
     module_packs,
+    app_profiles,
     module_test_harness,
     runbook_generator,
     workspace_scanner,

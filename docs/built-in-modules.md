@@ -28,6 +28,18 @@ Registers:
 - inputs: registered commands
 - outputs: command execution events
 
+### ui_adapters
+
+Maps registered modules to the surfaces where users can reach them: CLI commands, Tkinter screens, report sections, dashboard visibility, and TUI-friendly view models.
+
+Registers:
+
+- service: `ui_adapters`
+- command: `ui_adapters.render`
+- screen: `System / UI Adapters`
+- inputs: registry surfaces
+- outputs: surface map
+
 ### tui_shell
 
 Renders a dependency-free terminal dashboard.
@@ -181,6 +193,19 @@ Persistence:
 
 - stores trace events in SQLite when `storage` is available
 
+### trace_graph
+
+Turns actual runtime trace events into a run-history graph.
+
+Registers:
+
+- service: `trace_graph`
+- commands: `trace_graph.render`, `trace_graph.mermaid`
+- report section: `trace_graph.runtime`
+- screen: `System / Trace Graph`
+- inputs: trace events
+- outputs: run graph
+
 ### storage
 
 Provides SQLite lifecycle, initialization, health check, and backup baseline.
@@ -326,6 +351,9 @@ Starter families:
 - `ai_agent_tool`
 - `benchmark_evaluation`
 - `integration_control_panel`
+- `cli_tool`
+- `tui_tool`
+- `tkinter_tool`
 
 ### module_packs
 
@@ -338,6 +366,62 @@ Registers:
 - screen: `Tools / Module Packs`
 - inputs: template families
 - outputs: module packs
+
+### app_profiles
+
+Defines opinionated app modes for the kinds of tools this workspace tends to build.
+
+Registers:
+
+- service: `app_profiles`
+- command: `app_profiles.render`
+- screen: `Tools / App Profiles`
+- inputs: app mode
+- outputs: module bundle
+
+Profiles:
+
+- `cli_tool`
+- `tui_tool`
+- `tkinter_tool`
+- `agent_lab`
+- `data_api_tool`
+
+### workflows
+
+Defines repeatable module pipelines.
+
+Registers:
+
+- service: `workflows`
+- commands: `workflows.render`, `workflows.mermaid`, `workflows.demo`
+- screen: `Tools / Workflows`
+- inputs: workflow definition
+- outputs: workflow run
+
+Built-in workflows:
+
+- `import_report_export`
+- `api_sync_review`
+- `agent_eval`
+
+### recipes
+
+Provides tiny runnable examples that prove modules work together.
+
+Registers:
+
+- service: `recipes`
+- commands: `recipes.render`, `recipes.run`
+- screen: `Examples / Recipes`
+- inputs: recipe name
+- outputs: recipe artifact
+
+Built-in recipes:
+
+- `csv_report`
+- `api_sync`
+- `agent_eval`
 
 ### module_test_harness
 

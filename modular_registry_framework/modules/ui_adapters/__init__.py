@@ -1,0 +1,2 @@
+"""UI adapter inventory module."""
+

@@ -200,6 +200,11 @@ Use events for meaningful cross-module actions, not every small UI click.
 - `modular_registry_framework/modules/graph_export/` - Mermaid and JSON graph artifact snapshots
 - `modular_registry_framework/modules/template_generator/` - starter folders for common app families
 - `modular_registry_framework/modules/module_packs/` - reusable module sets for app families
+- `modular_registry_framework/modules/app_profiles/` - CLI, TUI, Tkinter, data/API, and agent app modes
+- `modular_registry_framework/modules/ui_adapters/` - surface coverage across CLI, TUI, Tkinter, dashboard, and reports
+- `modular_registry_framework/modules/workflows/` - named pipeline definitions and traceable demo runs
+- `modular_registry_framework/modules/recipes/` - runnable cross-module smoke-test examples
+- `modular_registry_framework/modules/trace_graph/` - actual runtime trace events as text or Mermaid
 - `modular_registry_framework/modules/module_test_harness/` - generated pytest module smoke tests
 - `modular_registry_framework/modules/runbook_generator/` - operational runbooks from registry metadata
 - `modular_registry_framework/modules/workspace_scanner/` - local workspace project inventory
@@ -249,6 +254,11 @@ mrf settings show
 mrf logs --level ERROR
 mrf artifacts list
 mrf repair plan .\SomeProject
+mrf profiles tui_tool
+mrf workflows import_report_export --mermaid
+mrf ui
+mrf trace-graph
+mrf recipes csv_report --run
 ```
 
 ## Scaffold A Module
@@ -321,6 +331,10 @@ The Flow Graph module automatically maps:
 Modules declare trace points with `registry.add_data_input()`, `registry.add_data_output()`, and `registry.add_flow()`. The graph can render as Mermaid or adjacency text from the Flow Graph screen or report section.
 
 Health checks now validate module dependencies and graph quality. Runtime operations can carry `trace_id` through jobs, imports, artifacts, reports, exports, audit events, and trace events.
+
+## App Surfaces And Recipes
+
+The template treats CLI, TUI, and Tkinter as sibling surfaces over the same services. `ui_adapters` shows which modules are exposed where, `app_profiles` recommends module bundles for common app modes, `workflows` documents repeatable pipelines, and `recipes` runs small examples that generate artifacts and trace history.
 
 ## Development Rules
 
